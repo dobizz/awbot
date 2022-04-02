@@ -3,55 +3,52 @@ import os
 import re
 import time
 import stat
+import logging
 import subprocess
 import platform
+import urllib.parse
 import requests
 from lxml import html
 from zipfile import ZipFile 
-from urllib.parse import urlparse, urlunparse
 
-
-class Release:
-    AUTO_DETECT = 0
-    STABLE = 1
-    BETA = 2
-
+logging.basicConfig(
+    format="[%(asctime)s] %(levelname)8s | %(message)s",
+    datefmt="%d-%b-%y %H:%M:%S",
+    level=logging.INFO,
+)
 
 def has_chromedriver() -> bool:
-    '''check if chromedriver is present in current directory'''
+    '''Check if chromedriver is present in current directory'''
     executable = 'chromedriver.exe' if platform.system() == 'Windows' else 'chromedriver'
     return os.path.exists(executable)
 
 
-def download_chromedriver(release=Release.AUTO_DETECT) -> None:
+def download_chromedriver() -> None:
     '''Download released chromedriver'''
-    url = 'https://chromedriver.chromium.org/'
-    if release == Release.AUTO_DETECT: url = url + 'downloads/'
-    print(url)
+    url = 'https://chromedriver.chromium.org/downloads/'
+    logging.debug(url)
 
-    # get link to latest stable release
-    print('Checking available versions.\n')
+    # get link to releases
+    logging.info('Checking available versions.')
     page = requests.get(url)
     tree = html.fromstring(page.content)
 
-    # select html element based on release
-    if release == Release.AUTO_DETECT:
-        installed_version = check_system_chrome_version()
-        search_str = '.'.join(installed_version.split('.')[:-1])
-        version = re.search(rf'{search_str}.\d+', page.text).group()
-    elif release == Release.STABLE:
-        element = tree.xpath('//*[@id="sites-canvas-main-content"]/table/tbody/tr/td/div/div[4]/ul/li[1]/a')[0]
-        version = element.text.split()[-1]
-    elif release == Release.BETA:
-        element = tree.xpath('//*[@id="sites-canvas-main-content"]/table/tbody/tr/td/div/div[4]/ul/li[2]/a')[0]
-        version = element.text.split()[-1]
-    else:
-        raise ValueError('ValueError invalid release option')
+    # select html element of release
+    installed_version = check_system_chrome_version()
 
-    print(f'Version: {version}\n')
+    # if chrome is not installed exit
+    if installed_version is None:
+        logging.error("Chrome is not installed")
+        return
+
+    search_str = '.'.join(installed_version.split('.')[:-1])
+    version = re.search(rf'{search_str}.\d+', page.text).group()
+
+    logging.debug(f'Version: {version}')
 
     sys_platform = platform.system()
     
+    # Set chromedriver download filename based on system platform
     # Linux
     if sys_platform == 'Linux':
         filename = 'chromedriver_linux64.zip'
@@ -62,31 +59,31 @@ def download_chromedriver(release=Release.AUTO_DETECT) -> None:
     else:
         filename = 'chromedriver_mac64.zip'
 
-    # build uri
-    uri = urlparse(f'https://chromedriver.storage.googleapis.com/{version}/')
-    uri = uri._replace(path=uri.path+filename)
+    # build download url
+    url = urllib.parse.urljoin(f'https://chromedriver.storage.googleapis.com/{version}/', filename)
 
-    # build url from uri
-    url = urlunparse(uri)
-
-    # rename old files
+    # select executable based on system platform
     executable = 'chromedriver.exe' if sys_platform == 'Windows' else 'chromedriver'
+
+    # check if executable exists and rename old files
     if has_chromedriver():
         src = executable
         dst = f'backup_{int(time.time())}_{executable}'
         os.rename(src, dst)
 
     # download zip file
-    print(f'Downloading: {url}\n')
+    logging.info(f'Downloading: {url}')
     reply = requests.get(url)
-    open(filename, 'wb').write(reply.content)
-    print('Download complete.\n')
+    with open(filename, 'wb') as chunk:
+        chunk.write(reply.content)
+    logging.info('Download complete.')
 
     # unzip downloaded file
     with ZipFile(filename, 'r') as zip:
-        print(f'Extracting: {filename}\n')
+        logging.info(f'Extracting: {filename}\n')
         zip.printdir()
         zip.extractall()
+        print()
 
     # set file permissions for Linux/Mac
     if sys_platform != 'Windows':
@@ -94,9 +91,10 @@ def download_chromedriver(release=Release.AUTO_DETECT) -> None:
         os.chmod(executable, stat.S_IRWXU | stat.S_IRWXG | stat.S_IROTH)
 
     # delete zip file
+    logging.info('Cleaning up')
     os.remove(filename)
 
-    print('\nDone!\n')
+    logging.info('Done!')
 
 
 def check_system_chrome_version() -> str:
@@ -105,19 +103,28 @@ def check_system_chrome_version() -> str:
     # Windows
     if sys_platform == 'Windows':
         try:
-            cmd = 'dir /B/AD "C:\Program Files (x86)\Google\Chrome\Application\"|findstr /R /C:"^[0-9].*\..*[0-9]$"'
+            if os.path.exists("C:\Program Files (x86)\Google\Chrome"):
+                path = "C:\Program Files (x86)\Google\Chrome"
+            elif os.path.exists("C:\Program Files\Google\Chrome"):
+                path = "C:\Program Files\Google\Chrome"
+            else:
+                logging.warning("Unable to find Chrome")
+                path = input("Please input absolute path to Chrome installation (eg. C:\Program Files (x86)\Google\Chrome): ")
+            cmd = f'dir /B/AD "{path}\Application"|findstr /R /C:"^[0-9].*\..*[0-9]$"'
+            logging.debug(cmd)
             version = subprocess.check_output(cmd, shell=True).decode().strip()
-        except:
-            cmd = 'dir /B/AD "C:\Program Files\Google\Chrome\Application\"|findstr /R /C:"^[0-9].*\..*[0-9]$"'
-            version = subprocess.check_output(cmd, shell=True).decode().strip()
+        except subprocess.CalledProcessError:
+            version = None
     # Linux/Mac
     else:
         cmd = 'google-chrome --version'
-        version = os.popen(cmd).read().strip().split()[-1]
-
+        try:
+            version = os.popen(cmd).read().strip().split()[-1]
+        except IndexError:
+            version = None
     return version
 
 
 if __name__ == '__main__':
-    print('Installed Chrome version:', check_system_chrome_version())
+    logging.info(f'Installed Chrome version: {check_system_chrome_version()}')
     download_chromedriver()
