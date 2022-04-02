@@ -5,9 +5,11 @@ import json
 import time
 import random
 import pathlib
+import platform
 from itertools import count
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
@@ -126,6 +128,7 @@ def main():
 
     # instantiate Chrome driver with given Chrome options
     driver = webdriver.Chrome(
+    	service=Service(os.path.join(os.getcwd(), "chromedriver.exe" if platform.system() == "Windows" else "chromedriver")),
         options=chrome_options,
     )
 
