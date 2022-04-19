@@ -78,12 +78,16 @@ class Account:
         """
         Gets and returns the list of tokens held by the instance account.
         """
-        url = f'https://wax.eosrio.io/v2/state/get_tokens?account={self.account}'
-        reply = self._session.get(url, timeout=Account.HTTP_TIMEOUT)
-        assert reply.status_code == 200
-        data = reply.json()
-        assert data['account'] == self.account
-        return data['tokens']
+        try:
+            url = f'https://wax.eosrio.io/v2/state/get_tokens?account={self.account}'
+            reply = self._session.get(url, timeout=Account.HTTP_TIMEOUT)
+            assert reply.status_code == 200
+        except AssertionError:
+            return []
+        else:
+            data = reply.json()
+            assert data['account'] == self.account
+            return data['tokens']
 
     def get_chain_info(self) -> dict:
         """
