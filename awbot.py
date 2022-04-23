@@ -14,6 +14,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import NoSuchElementException
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium_stealth import stealth
 from utils import download_chromedriver, has_chromedriver
 from awapi import Account
@@ -58,7 +59,7 @@ def main():
     # instantiate Chrome driver with given Chrome options
     try:
         driver = webdriver.Chrome(
-            service=Service(os.path.join(os.getcwd(), "chromedriver.exe" if platform.system() == "Windows" else "chromedriver")),
+            service=Service(ChromeDriverManager().install()),
             options=chrome_options,
         )
     except TypeError:
