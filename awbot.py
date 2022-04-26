@@ -16,7 +16,6 @@ from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import NoSuchElementException
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium_stealth import stealth
-from utils import download_chromedriver, has_chromedriver
 from awapi import Account
 
 
@@ -67,7 +66,7 @@ def main():
         return
 
     # change page load timeout
-    driver.set_page_load_timeout(10)
+    driver.set_page_load_timeout(60)
 
     # instatiate stealth        
     stealth(
@@ -223,10 +222,6 @@ def main():
 
 if __name__ == '__main__':
     assert sys.version_info >= (3, 6), 'Python 3.6+ required.'
-
-    # check if chromedriver is present and download if needed
-    if not has_chromedriver():
-        download_chromedriver()
 
     # call main routine
     main()
