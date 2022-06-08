@@ -143,7 +143,7 @@ def main():
                 _print_(".")
                 # try to find mine button
                 try:
-                    mine_btn = driver.find_element(By.XPATH, '//*[text()="Mine"]')
+                    mine_btn = driver.find_element(By.XPATH, '//*[@id="root"]/div[3]/div[1]/div/div[3]/div[4]/div/div[2]/div/div/div/div/span')
 
                 except KeyboardInterrupt:
                     print('Stopping bot.')
@@ -152,7 +152,6 @@ def main():
 
                 # if button is not found
                 except NoSuchElementException:
-                    browser.refresh();
                     time.sleep(5)
 
                 # if button is found
