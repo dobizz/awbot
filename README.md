@@ -10,7 +10,7 @@ Alien Worlds automation using Python
 ### Installation Instructions
 - Clone this repository
 ```
-git clone https://github.com/dobizz/awbot.git
+git clone https://github.com/theDebonair/awbot.git
 cd awbot
 ```
 - Install all the required Python packages
@@ -27,12 +27,3 @@ python awbot.py
 On the first run you need to login to your wax account, on the succeeding runs you will be logged in automatically as the session cookies will be saved.
 
 Follow the prompts in the command terminal.
-
-### Donations
-Donations are much welcome to buy needed coffee.
-
-BTC `1zdraxHPQfZ8wvpMXt2VYhnGwmkLCf7UL`
-
-ETH `0x4e1736Db4d3912e6Ddd4E5a7A710D85ed369B987`
-
-XRP `rU2mEJSLqBRkYLVTv55rFTgQajkLTnT6mA` Destination Tag `107601`
