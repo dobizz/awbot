@@ -152,6 +152,7 @@ def main():
 
                 # if button is not found
                 except NoSuchElementException:
+                    browser.refresh();
                     time.sleep(5)
 
                 # if button is found
