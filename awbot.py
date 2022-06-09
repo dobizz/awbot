@@ -143,7 +143,7 @@ def main():
                 _print_(".")
                 # try to find mine button
                 try:
-                    mine_btn = driver.find_element(By.XPATH, '//*[@id="root"]/div[3]/div[1]/div/div[3]/div[4]/div/div[2]/div/div/div/div/span')
+                    mine_btn = driver.find_element(By.XPATH, "//*[contains(text(), 'Mine')]")
 
                 except KeyboardInterrupt:
                     print('Stopping bot.')
@@ -163,7 +163,7 @@ def main():
                     break
 
             # wait for claim button
-            claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, '//*[text()="Claim Mine"]')))
+            claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Claim Mine')]")))
             print("Found Claim button!")
 
             # click claim button
