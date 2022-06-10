@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 import sys
+import os
 import time
 import random
 import pathlib
-import requests
-import winsound
 from itertools import count
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -24,19 +23,38 @@ def _print_(text: str) -> None:
 
 
 def main():
-    # check internet connection
-    try:
-        requests.get('https://www.google.com', timeout=5)
-        print("\nInternet available.")
-    except (requests.ConnectionError, requests.Timeout):
-        print("\nNo internet.")
-        return
-
     # define game url
     url = "https://play.alienworlds.io"
 
+    # check for account.txt file
+    if os.path.exists("account.txt"):
+
+        # check for file size
+        if os.stat("account.txt").st_size != 0:
+            file = open("account.txt", "r")
+            wallet = file.read()
+            file.close()
+
+        # delete the file if found empty account.txt file
+        else:
+            print("\nDeleting corrupted \"account.txt\" file in the directory.")
+            time.sleep(1)
+            os.remove("account.txt")
+            print("\nDeleted.\nRestarting bot.")
+            time.sleep(1)
+            return
+
+    # create account.txt file if not found
+    else:
+        nfile = open("account.txt", "w")
+        nfile.write(input("\nPlease enter your wax wallet address: "))
+        nfile.close()
+        print("\nRestarting bot.")
+        time.sleep(1)
+        return
+
     # create AW Account instance
-    aw = Account(input("\nPlease enter account name (e.g abcde.wam): "))
+    aw = Account(wallet)
 
     # define range for loop delay
     delay_min = 60          # min delay before next loop
@@ -52,8 +70,9 @@ def main():
     chrome_options.add_argument("--ignore-certificate-errors")
     chrome_options.add_argument("--ignore-certificate-errors-spki-list")
     chrome_options.add_argument("--ignore-ssl-errors")
+    chrome_options.add_argument("--window-size=480,270")
     # when there is already a persistent session, you may activate headless mode
-    chrome_options.add_argument('--headless')
+    # chrome_options.add_argument("--headless")
 
     chrome_options.add_experimental_option(
         "excludeSwitches", ["enable-automation"])
@@ -93,7 +112,7 @@ def main():
     # make GET request
     driver.get(url)
 
-    print("\nBot will start after 30 seconds, press \"Ctrl + C\" to pause the execution.")
+    print("\nStarting in 30 seconds, press \"Ctrl + C\" to pause.")
 
     while True:
         try:
@@ -106,7 +125,7 @@ def main():
             input("\nPress any key to continue.")
             break
 
-    print("\nStarting bot, press \"Ctrl + C\" to stop the execution.\n")
+    print("\nStarting bot, press \"Ctrl + C\" to stop.\n")
 
     # initialize crash count
     crashes = 0
@@ -170,7 +189,6 @@ def main():
                         By.XPATH, "//span[contains(text(), 'Mine')]")
 
                 except KeyboardInterrupt:
-                    winsound.MessageBeep()
                     print('\nStopping bot.')
                     driver.quit()
                     sys.exit()
@@ -232,9 +250,9 @@ def main():
             print("\nDone sleeping.\n")
 
         except KeyboardInterrupt:
-            winsound.MessageBeep()
             print('\nStopping bot.')
-            break
+            driver.quit()
+            sys.exit()
 
         # if error occured
         except:
@@ -248,7 +266,7 @@ def main():
     driver.quit()
 
 
-if __name__ == '__main__':
+while True:
     assert sys.version_info >= (3, 6), 'Python 3.6+ required.'
 
     # call main routine

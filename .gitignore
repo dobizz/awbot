@@ -133,5 +133,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# pip file
 Pipfile
 Pipfile.lock
+
+# Wallet address
+account.txt

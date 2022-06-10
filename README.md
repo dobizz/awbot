@@ -17,6 +17,7 @@ cd awbot
 ```
 pip install -r requirements.txt
 ```
+- It is recommended to use VirtualEnv for different instances of the bot.
 
 ### Running Instructions
 After all the dependencies have been downloaded and installed, simply run awbot.py
