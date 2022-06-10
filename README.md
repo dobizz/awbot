@@ -13,14 +13,23 @@ Alien Worlds automation using Python
 git clone https://github.com/theDebonair/awbot.git
 cd awbot
 ```
-- Install all the required Python packages
+- Install all the required Python packages (Globally, not in VirtualEnv)
 ```
 pip install -r requirements.txt
 ```
-- It is recommended to use VirtualEnv for different instances of the bot.
 
-### Running Instructions
-After all the dependencies have been downloaded and installed, simply run awbot.py
+### Recommendations
+- Use VirtualEnv for different instances of the bot.
+- Use high speed internet for better and error-free functionality.
+
+### Running Instructions (For Windows users)
+After all the dependencies have been downloaded and installed, simply run "run.ps1" from powershell
+```
+run.ps1
+```
+
+### Running Instructions (For non-Windows users)
+After all the dependencies have been downloaded and installed, simply run "awbot.py"
 ```
 python awbot.py
 ```
@@ -28,3 +37,10 @@ python awbot.py
 On the first run you need to login to your wax account, on the succeeding runs you will be logged in automatically as the session cookies will be saved.
 
 Follow the prompts in the command terminal.
+
+### PS
+- For Windows users, VirtualEnv will be created automatically when following the above instructions.
+- For non- Windows users, please create a VirtualEnv using
+```
+python -m venv venv
+```

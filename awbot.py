@@ -71,6 +71,7 @@ def main():
     chrome_options.add_argument("--ignore-certificate-errors-spki-list")
     chrome_options.add_argument("--ignore-ssl-errors")
     chrome_options.add_argument("--window-size=480,270")
+    chrome_options.add_argument("−−mute−audio")
     # when there is already a persistent session, you may activate headless mode
     # chrome_options.add_argument("--headless")
 
@@ -90,7 +91,8 @@ def main():
         )
     except TypeError:
         print("\nPlease update your selenium package.")
-        return
+        driver.quit()
+        sys.exit()
 
     # change page load timeout
     driver.set_page_load_timeout(60)
@@ -112,18 +114,15 @@ def main():
     # make GET request
     driver.get(url)
 
-    print("\nStarting in 30 seconds, press \"Ctrl + C\" to pause.")
+    # check for chrome-data dir
+    if os.path.isdir("chrome-data"):
+        print("\nStarting bot in 10 seconds.")
+        time.sleep(10)
 
-    while True:
-        try:
-            # bot waits for 30 seconds
-            time.sleep(30)
-            break
-
-        except KeyboardInterrupt:
-            print("\nPausing bot.")
-            input("\nPress any key to continue.")
-            break
+    # create chrome-data dir if not found
+    else:
+        print("\nPausing bot.")
+        input("\nPlease sign-in .Then, press any key to continue.")
 
     print("\nStarting bot, press \"Ctrl + C\" to stop.\n")
 
