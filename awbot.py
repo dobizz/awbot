@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-import os
 import sys
-import json
 import time
 import random
 import pathlib
-import platform
+import requests
+import winsound
 from itertools import count
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -14,22 +13,30 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.common.exceptions import NoSuchElementException
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium_stealth import stealth
+from webdriver_manager.chrome import ChromeDriverManager
 from awapi import Account
 
 
-def _print_(text:str) -> None:
+def _print_(text: str) -> None:
     sys.stdout.write(text)
     sys.stdout.flush()
 
 
 def main():
+    # check internet connection
+    try:
+        requests.get('https://www.google.com', timeout=5)
+        print("\nInternet available.")
+    except (requests.ConnectionError, requests.Timeout):
+        print("\nNo internet.")
+        return
+
     # define game url
     url = "https://play.alienworlds.io"
 
     # create AW Account instance
-    aw = Account(input("Please enter account name (e.g abcde.wam): "))
+    aw = Account(input("\nPlease enter account name (e.g abcde.wam): "))
 
     # define range for loop delay
     delay_min = 60          # min delay before next loop
@@ -46,9 +53,10 @@ def main():
     chrome_options.add_argument("--ignore-certificate-errors-spki-list")
     chrome_options.add_argument("--ignore-ssl-errors")
     # when there is already a persistent session, you may activate headless mode
-    # chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--headless')
 
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option(
+        "excludeSwitches", ["enable-automation"])
     chrome_options.add_experimental_option("useAutomationExtension", False)
 
     # save current browsing session to make it persistent
@@ -62,21 +70,21 @@ def main():
             options=chrome_options,
         )
     except TypeError:
-        print("Please update your selenium package")
+        print("\nPlease update your selenium package.")
         return
 
     # change page load timeout
     driver.set_page_load_timeout(60)
 
-    # instatiate stealth        
+    # instatiate stealth
     stealth(
-        driver,                
-        languages=["en-US", "en"],                
-        vendor="Google Inc.",                
-        platform="Win32",                
-        webgl_vendor="Intel Inc.",                
-        renderer="Intel Iris OpenGL Engine",                
-        fix_hairline=True,        
+        driver,
+        languages=["en-US", "en"],
+        vendor="Google Inc.",
+        platform="Win32",
+        webgl_vendor="Intel Inc.",
+        renderer="Intel Iris OpenGL Engine",
+        fix_hairline=True,
     )
 
     # save current window handle
@@ -85,9 +93,20 @@ def main():
     # make GET request
     driver.get(url)
 
-    input("\nPlease login and press <ENTER> when ready to Mine")
+    print("\nBot will start after 30 seconds, press \"Ctrl + C\" to pause the execution.")
 
-    print("\nStarting bot.\n")
+    while True:
+        try:
+            # bot waits for 30 seconds
+            time.sleep(30)
+            break
+
+        except KeyboardInterrupt:
+            print("\nPausing bot.")
+            input("\nPress any key to continue.")
+            break
+
+    print("\nStarting bot, press \"Ctrl + C\" to stop the execution.\n")
 
     # initialize crash count
     crashes = 0
@@ -117,24 +136,28 @@ def main():
             width = 80
 
             print("=" * width)
-            print("CPU: [ {:,} / {:,} ms ]\t\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
-            print("NET: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(net_used, net_max, net_pct))
-            print("RAM: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(ram_used, ram_max, ram_pct))
+            print(
+                "CPU: [ {:,} / {:,} ms ]\t\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
+            print(
+                "NET: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(net_used, net_max, net_pct))
+            print(
+                "RAM: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(ram_used, ram_max, ram_pct))
             print("=" * width)
 
             # get balances
             wax = aw.wax_balance
             tlm = aw.tlm_balance
-            
+
             # show balances
             print("WAX Balance:", wax)
             print("TLM Balance:", tlm)
 
             if (cpu_pct > resource_limit) or (ram_pct > resource_limit) or (net_pct > resource_limit):
-                print("\nResource utilization is above the set threshold of {} %".format(resource_limit))
+                print("\nResource utilization is above the set threshold of {} %".format(
+                    resource_limit))
                 print("\nSleeping for {} seconds\n".format(resource_sleep))
                 time.sleep(resource_sleep)
-                continue        
+                continue
 
             # wait for mine button to be found
             print("\nWaiting for Mine button")
@@ -143,10 +166,12 @@ def main():
                 _print_(".")
                 # try to find mine button
                 try:
-                    mine_btn = driver.find_element(By.XPATH, "//*[contains(text(), 'Mine')]")
+                    mine_btn = driver.find_element(
+                        By.XPATH, "//span[contains(text(), 'Mine')]")
 
                 except KeyboardInterrupt:
-                    print('Stopping bot.')
+                    winsound.MessageBeep()
+                    print('\nStopping bot.')
                     driver.quit()
                     sys.exit()
 
@@ -156,15 +181,15 @@ def main():
 
                 # if button is found
                 else:
-                    _print_(":")
                     print("\nFound Mine button!")
                     # click
                     mine_btn.click()
                     break
 
             # wait for claim button
-            claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Claim Mine')]")))
-            print("Found Claim button!")
+            claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located(
+                (By.XPATH, "//span[contains(text(), 'Claim Mine')]")))
+            print("\nFound Claim button!")
 
             # click claim button
             claim_btn.click()
@@ -180,24 +205,25 @@ def main():
                     break
 
             # wait for approve button to be visible and click button
-            btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
+            btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located(
+                (By.XPATH, "//*[contains(text(), 'Approve')]")))
 
             # if approve button is found
             if btn:
-                print('\tFound Approve button.')
+                print('\n\tFound Approve button.')
                 btn.click()
-                print('\tApproving transaction.')
+                print('\n\tApproving transaction.')
 
             # if approve button could not be found
             else:
-                raise IOError('\tUnable to load or find approve button.')
+                raise IOError('\n\tUnable to load or find approve button.')
 
             # go control back to main window
-            print('\tSwitching back to main window.\n')
+            print('\n\tSwitching back to main window.\n')
             driver.switch_to.window(main_window)
 
             # show the number of loops done
-            print(f"Total runs: {loop_count}")    
+            print(f"\nTotal runs: {loop_count}")
 
             # delay the bot before starting next loop
             delay = random.randint(delay_min, delay_max)
@@ -206,23 +232,24 @@ def main():
             print("\nDone sleeping.\n")
 
         except KeyboardInterrupt:
-            print('Stopping bot.')
+            winsound.MessageBeep()
+            print('\nStopping bot.')
             break
 
         # if error occured
         except:
             crashes += 1
-            print(f"Bot encountered an error. {crashes} Total crashes since start.")
+            print(
+                f"\nBot encountered an error. {crashes} Total crashes since start.")
             # make GET request
             driver.get(url)
 
     # close the webdriver
     driver.quit()
-            
+
 
 if __name__ == '__main__':
     assert sys.version_info >= (3, 6), 'Python 3.6+ required.'
 
     # call main routine
     main()
-
