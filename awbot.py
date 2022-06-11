@@ -75,8 +75,7 @@ def main():
     # when there is already a persistent session, you may activate headless mode
     # chrome_options.add_argument("--headless")
 
-    chrome_options.add_experimental_option(
-        "excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
     chrome_options.add_experimental_option("useAutomationExtension", False)
 
     # save current browsing session to make it persistent
@@ -155,12 +154,9 @@ def main():
             width = 80
 
             print("=" * width)
-            print(
-                "CPU: [ {:,} / {:,} ms ]\t\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
-            print(
-                "NET: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(net_used, net_max, net_pct))
-            print(
-                "RAM: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(ram_used, ram_max, ram_pct))
+            print("CPU: [ {:,} / {:,} ms ]\t\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
+            print("NET: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(net_used, net_max, net_pct))
+            print("RAM: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(ram_used, ram_max, ram_pct))
             print("=" * width)
 
             # get balances
@@ -172,8 +168,7 @@ def main():
             print("TLM Balance:", tlm)
 
             if (cpu_pct > resource_limit) or (ram_pct > resource_limit) or (net_pct > resource_limit):
-                print("\nResource utilization is above the set threshold of {} %".format(
-                    resource_limit))
+                print("\nResource utilization is above the set threshold of {} %".format(resource_limit))
                 print("\nSleeping for {} seconds\n".format(resource_sleep))
                 time.sleep(resource_sleep)
                 continue
@@ -183,13 +178,13 @@ def main():
 
             while True:
                 _print_(".")
+                
                 # try to find mine button
                 try:
-                    mine_btn = driver.find_element(
-                        By.XPATH, "//span[contains(text(), 'Mine')]")
+                    mine_btn = driver.find_element(By.XPATH, "//span[contains(text(), 'Mine')]")
 
                 except KeyboardInterrupt:
-                    print('\nStopping bot.')
+                    print("\nStopping bot.")
                     driver.quit()
                     sys.exit()
 
@@ -205,8 +200,7 @@ def main():
                     break
 
             # wait for claim button
-            claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located(
-                (By.XPATH, "//span[contains(text(), 'Claim Mine')]")))
+            claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//span[contains(text(), 'Claim Mine')]")))
             print("\nFound Claim button!")
 
             # click claim button
@@ -218,26 +212,25 @@ def main():
             # switch control to pop-up window
             for this_window in driver.window_handles:
                 if this_window != main_window:
-                    print('\n\tSwitching to new window.')
+                    print("\n\tSwitching to new window.")
                     driver.switch_to.window(this_window)
                     break
 
             # wait for approve button to be visible and click button
-            btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located(
-                (By.XPATH, "//*[contains(text(), 'Approve')]")))
+            btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
 
             # if approve button is found
             if btn:
-                print('\n\tFound Approve button.')
+                print("\n\tFound Approve button.")
                 btn.click()
-                print('\n\tApproving transaction.')
+                print("\n\tApproving transaction.")
 
             # if approve button could not be found
             else:
                 raise IOError('\n\tUnable to load or find approve button.')
 
             # go control back to main window
-            print('\n\tSwitching back to main window.\n')
+            print("\n\tSwitching back to main window.\n")
             driver.switch_to.window(main_window)
 
             # show the number of loops done
@@ -250,15 +243,15 @@ def main():
             print("\nDone sleeping.\n")
 
         except KeyboardInterrupt:
-            print('\nStopping bot.')
+            print("\nStopping bot.")
             driver.quit()
             sys.exit()
 
         # if error occured
         except:
             crashes += 1
-            print(
-                f"\nBot encountered an error. {crashes} Total crashes since start.")
+            print(f"\nBot encountered an error. {crashes} Total crashes since start.")
+            
             # make GET request
             driver.get(url)
 
