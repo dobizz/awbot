@@ -114,15 +114,16 @@ def main():
     # make GET request
     driver.get(url)
 
-    # check for chrome-data dir
-    if os.path.isdir("chrome-data"):
+    # check for sign.file file
+    if os.path.exists("signin.file"):
         print("\nStarting bot in 10 seconds.")
         time.sleep(10)
 
-    # create chrome-data dir if not found
+    # create sign.file if not found
     else:
         print("\nPausing bot.")
         input("\nPlease sign-in .Then, press any key to continue.")
+        open("sign.file")
 
     print("\nStarting bot, press \"Ctrl + C\" to stop.\n")
 
