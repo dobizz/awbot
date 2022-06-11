@@ -115,7 +115,7 @@ def main():
     driver.get(url)
 
     # check for sign.file file
-    if os.path.exists("signin.file"):
+    if os.path.exists("sign.file"):
         print("\nStarting bot in 10 seconds.")
         time.sleep(10)
 
