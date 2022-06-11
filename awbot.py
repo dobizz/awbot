@@ -123,7 +123,7 @@ def main():
     else:
         print("\nPausing bot.")
         input("\nPlease sign-in .Then, press any key to continue.")
-        open("sign.file")
+        open("sign.file", "a").close()
 
     print("\nStarting bot, press \"Ctrl + C\" to stop.\n")
 
