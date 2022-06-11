@@ -51,12 +51,18 @@ class Account:
         try:
             url = 'https://wax.greymass.com/v1/chain/get_currency_balance'
             reply = self._session.post(url, json=json_payload, timeout=Account.HTTP_TIMEOUT)
+            assert reply.status_code == 200
+            balance = float(reply.json()[0].split()[0])
+            return balance
         except ReadTimeout:
             url = 'https://chain.wax.io/v1/chain/get_currency_balance'
             reply = self._session.post(url, json=json_payload, timeout=Account.HTTP_TIMEOUT)
-        assert reply.status_code == 200
-        balance = float(reply.json()[0].split()[0])
-        return balance
+            assert reply.status_code == 200
+            balance = float(reply.json()[0].split()[0])
+            return balance
+        except:
+            balance = "Error retrieving values"
+            return balance
 
     def get_account(self) -> dict:
         """

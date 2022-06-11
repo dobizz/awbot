@@ -154,9 +154,9 @@ def main():
             width = 80
 
             print("=" * width)
-            print("CPU: [ {:,} / {:,} ms ]\t\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
-            print("NET: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(net_used, net_max, net_pct))
-            print("RAM: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(ram_used, ram_max, ram_pct))
+            print("CPU: [ {:,} / {:,} ms ]\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
+            print("NET: [ {:,} / {:,} B ]\t\tUsed: {} %".format(net_used, net_max, net_pct))
+            print("RAM: [ {:,} / {:,} B ]\t\tUsed: {} %".format(ram_used, ram_max, ram_pct))
             print("=" * width)
 
             # get balances
@@ -164,8 +164,8 @@ def main():
             tlm = aw.tlm_balance
 
             # show balances
-            print("WAX Balance:", wax)
-            print("TLM Balance:", tlm)
+            print("\nWAX Balance: ", wax)
+            print("\nTLM Balance: ", tlm)
 
             if (cpu_pct > resource_limit) or (ram_pct > resource_limit) or (net_pct > resource_limit):
                 print("\nResource utilization is above the set threshold of {} %".format(resource_limit))
