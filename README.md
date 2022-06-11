@@ -37,8 +37,11 @@ python awbot.py
 ###### On the first run you need to login to your wax account, on the succeeding runs you will be logged in automatically as the session cookies will be saved.
 
 ###### Follow the prompts in the command terminal.
+<<<<<<< HEAD
 
 ###### You must open the terminal in the same directory where the files are stored.
+=======
+>>>>>>> 2e2c203b3de5239fe9ddbba033cbe477619c1023
 
 ### PS
 - ###### For Windows users, VirtualEnv will be created automatically when following the above instructions.
@@ -46,4 +49,8 @@ python awbot.py
 ```
 python -m venv venv
 ```
+<<<<<<< HEAD
 - ###### Feel free to make suggestions, report bugs on this project's [discussions](https://github.com/theDebonair/awbot/discussions) tab.
+=======
+- ###### Feel free to make suggestions, report bugs on this project's [discussions](https://github.com/theDebonair/ryzenadj_2500u_a315/discussions) tab.
+>>>>>>> 2e2c203b3de5239fe9ddbba033cbe477619c1023
