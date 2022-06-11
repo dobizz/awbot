@@ -40,7 +40,7 @@ python awbot.py
 
 ### PS
 - ###### For Windows users, VirtualEnv will be created automatically when following the above instructions.
-- ###### For non- Windows users, please create a VirtualEnv using
+- ###### For non- Windows users, please create a VirtualEnv.
 ```
 python -m venv venv
 ```
