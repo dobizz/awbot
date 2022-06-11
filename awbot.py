@@ -71,7 +71,7 @@ def main():
     chrome_options.add_argument("--ignore-certificate-errors-spki-list")
     chrome_options.add_argument("--ignore-ssl-errors")
     chrome_options.add_argument("--window-size=480,270")
-    chrome_options.add_argument("−−mute−audio")
+    chrome_options.add_argument("--mute-audio")
     # when there is already a persistent session, you may activate headless mode
     # chrome_options.add_argument("--headless")
 

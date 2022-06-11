@@ -140,3 +140,6 @@ Pipfile.lock
 
 # Wallet address
 account.txt
+
+# Signin check file
+sign.file
