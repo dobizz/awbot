@@ -235,7 +235,7 @@ def main():
 
                 # if button is found
                 else:
-                    print("Found \"Mine\" button!")
+                    print("\nFound \"Mine\" button!")
 
                     # click
                     mine_btn.click()
