@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
+import re
 import sys
 import os
 import time
 import random
 import pathlib
+import http.client as httplib
 from itertools import count
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -11,7 +13,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import *
 from selenium_stealth import stealth
 from webdriver_manager.chrome import ChromeDriverManager
 from awapi import Account
@@ -23,6 +25,24 @@ def _print_(text: str) -> None:
 
 
 def main():
+    # clear terminal
+    os.system('cls' if os.name == 'nt' else 'clear')
+    
+    # check internet connection
+    conn = httplib.HTTPConnection("1.1.1.1", timeout = 5)
+    try:
+        print("Internet check.")
+        conn.request("HEAD", "/")
+        conn.close()
+        print("Internet available.")
+    except:
+        conn.close()
+        print("No Internet. Re-checking in 30 seconds.")
+        for x in range(30):
+            time.sleep(1)
+            _print_(".")
+        return
+
     # define game url
     url = "https://play.alienworlds.io"
 
@@ -40,7 +60,8 @@ def main():
             print("\nDeleting corrupted \"account.txt\" file in the directory.")
             time.sleep(1)
             os.remove("account.txt")
-            print("\nDeleted.\nRestarting bot.")
+            print("File deleted.")
+            print("Restarting bot.")
             time.sleep(1)
             return
 
@@ -49,7 +70,7 @@ def main():
         nfile = open("account.txt", "w")
         nfile.write(input("\nPlease enter your wax wallet address: "))
         nfile.close()
-        print("\nRestarting bot.")
+        print("Restarting bot.")
         time.sleep(1)
         return
 
@@ -70,8 +91,9 @@ def main():
     chrome_options.add_argument("--ignore-certificate-errors")
     chrome_options.add_argument("--ignore-certificate-errors-spki-list")
     chrome_options.add_argument("--ignore-ssl-errors")
-    chrome_options.add_argument("--window-size=480,270")
+    chrome_options.add_argument("--window-size=0,180")
     chrome_options.add_argument("--mute-audio")
+
     # when there is already a persistent session, you may activate headless mode
     # chrome_options.add_argument("--headless")
 
@@ -91,12 +113,12 @@ def main():
     except TypeError:
         print("\nPlease update your selenium package.")
         driver.quit()
-        sys.exit()
+        sys.exit(0)
 
     # change page load timeout
     driver.set_page_load_timeout(60)
 
-    # instatiate stealth
+    # instantiate stealth
     stealth(
         driver,
         languages=["en-US", "en"],
@@ -116,21 +138,31 @@ def main():
     # check for sign.file file
     if os.path.exists("sign.file"):
         print("\nStarting bot in 10 seconds.")
-        time.sleep(10)
+        for x in range(10):
+            time.sleep(1)
+            _print_(".")
 
     # create sign.file if not found
     else:
         print("\nPausing bot.")
-        input("\nPlease sign-in .Then, press any key to continue.")
+        input("Please sign-in .Then, press any key to continue.")
         open("sign.file", "a").close()
 
-    print("\nStarting bot, press \"Ctrl + C\" to stop.\n")
+    print("\nStarting bot, press \"Ctrl + C\" to stop.")
 
-    # initialize crash count
-    crashes = 0
+    # initialize mine loop count
+    mine_loop_count = 0
+
+    # load tlm balance
+    tlm_old = aw.tlm_balance
+
+    # activation switch for checking tlm mined per click
+    i = False
 
     # main bot loop
     for loop_count in count(1):
+        # clear terminal
+        os.system('cls' if os.name == 'nt' else 'clear')
         try:
             # fetch cpu usage details
             cpu_usage = aw.cpu_usage
@@ -150,35 +182,43 @@ def main():
             net_used = net_usage['used']
             net_pct = int(net_used / net_max * 100)
 
-            # line width
-            width = 80
-
-            print("=" * width)
-            print("CPU: [ {:,} / {:,} ms ]\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
-            print("NET: [ {:,} / {:,} B ]\t\tUsed: {} %".format(net_used, net_max, net_pct))
-            print("RAM: [ {:,} / {:,} B ]\t\tUsed: {} %".format(ram_used, ram_max, ram_pct))
-            print("=" * width)
-
-            # get balances
-            wax = aw.wax_balance
-            tlm = aw.tlm_balance
+            print("CPU: [ {:,} / {:,} ms ]\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
+            print("NET: [ {:,} / {:,} B ]\tUsed: {} %".format(net_used, net_max, net_pct))
+            print("RAM: [ {:,} / {:,} B ]\tUsed: {} %".format(ram_used, ram_max, ram_pct))
 
             # show balances
-            print("\nWAX Balance: ", wax)
-            print("\nTLM Balance: ", tlm)
+            print(f"\nWAX Balance: {aw.wax_balance}")
+            print(f"TLM Balance: {aw.tlm_balance}")
+
+            # show tlm mined per click
+            if i:
+                try:
+
+                    # to find the value of tlm mined
+                    tlm_new = aw.tlm_balance
+                    tlm_mined = tlm_new - tlm_old
+                    print(f"TLM mined on last claim: {tlm_mined:.4f}")
+                    tlm_old = tlm_new
+
+                    # to find average rate of tlm mining
+                    tlm_sum += tlm_mined
+                    average = tlm_sum/mine_loop_count
+                    print(f"Average rate for TLM mining: {average}/claim")
+                except:
+                    print("\nUnable to show the average rate & the difference between the claims.")
 
             if (cpu_pct > resource_limit) or (ram_pct > resource_limit) or (net_pct > resource_limit):
                 print("\nResource utilization is above the set threshold of {} %".format(resource_limit))
-                print("\nSleeping for {} seconds\n".format(resource_sleep))
-                time.sleep(resource_sleep)
+                print("Sleeping for {} seconds\n".format(resource_sleep))
+                for x in range(resource_sleep):
+                    time.sleep(1)
+                    _print_(".")
                 continue
 
             # wait for mine button to be found
-            print("\nWaiting for Mine button")
+            print("\nWaiting for \"Mine\" button.")
 
             while True:
-                _print_(".")
-                
                 # try to find mine button
                 try:
                     mine_btn = driver.find_element(By.XPATH, "//span[contains(text(), 'Mine')]")
@@ -186,76 +226,84 @@ def main():
                 except KeyboardInterrupt:
                     print("\nStopping bot.")
                     driver.quit()
-                    sys.exit()
+                    sys.exit(0)
 
                 # if button is not found
                 except NoSuchElementException:
-                    time.sleep(5)
+                    time.sleep(1)
+                    _print_(".")
 
                 # if button is found
                 else:
-                    print("\nFound Mine button!")
+                    print("Found \"Mine\" button!")
+
                     # click
                     mine_btn.click()
                     break
 
             # wait for claim button
+            print("\nSearching for \"Claim\" button.")
             claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//span[contains(text(), 'Claim Mine')]")))
-            print("\nFound Claim button!")
+            print("Found \"Claim\" button!")
 
             # click claim button
             claim_btn.click()
 
-            # pause for 3 seconds
+            # wait for pop-up window
+            print("\n\tSearching for pop-up window.")
             time.sleep(3)
 
             # switch control to pop-up window
             for this_window in driver.window_handles:
                 if this_window != main_window:
-                    print("\n\tSwitching to new window.")
+                    print("\tSwitching to pop-up window.")
                     driver.switch_to.window(this_window)
                     break
 
-            # wait for approve button to be visible and click button
+            # wait for approve button to be visible & click button
             btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
 
             # if approve button is found
             if btn:
-                print("\n\tFound Approve button.")
+                print("\n\tFound \"Approve\" button.")
                 btn.click()
-                print("\n\tApproving transaction.")
+                print("\tApproving transaction.")
+                mine_loop_count += 1
 
             # if approve button could not be found
             else:
                 raise IOError('\n\tUnable to load or find approve button.')
 
             # go control back to main window
-            print("\n\tSwitching back to main window.\n")
+            print("\n\tSwitching back to main window.")
             driver.switch_to.window(main_window)
 
             # show the number of loops done
-            print(f"\nTotal runs: {loop_count}")
+            print(f"\nTotal number of execution(s): {loop_count}")
+
+            # show the number of loops done
+            print(f"Total number of approval(s): {mine_loop_count}")
 
             # delay the bot before starting next loop
             delay = random.randint(delay_min, delay_max)
             print(f"\nSleeping for {delay} seconds.")
-            time.sleep(delay)
-            print("\nDone sleeping.\n")
+            for x in range(delay):
+                time.sleep(1)
+                _print_(".")
+            print("Done sleeping.")
+            i = True
 
         except KeyboardInterrupt:
             print("\nStopping bot.")
             driver.quit()
-            sys.exit()
+            sys.exit(0)
 
-        # if error occured
+        # if any error occured
         except:
-            crashes += 1
-            print(f"\nBot encountered an error. {crashes} Total crashes since start.")
-            
-            # make GET request
-            driver.get(url)
+            print("\nBot encountered an error. Restarting.")
+            return
 
-    # close the webdriver
+    # close the webdriver & exit
     driver.quit()
 
 
