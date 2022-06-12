@@ -205,7 +205,8 @@ def main():
 
                     # to find average rate of tlm mining
                     tlm_sum += tlm_mined
-                    average = tlm_sum/mine_loop_count
+                    avg = tlm_sum/mine_loop_count
+                    average = abs(avg)
                     print(f"Average rate for TLM mining: {average:.4f}/claim")
                 except:
                     print("\nUnable to show the average rate & the difference between the claims.")
