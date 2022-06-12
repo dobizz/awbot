@@ -97,12 +97,12 @@ def main():
     # when there is already a persistent session, you may activate headless mode
     # chrome_options.add_argument("--headless")
 
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome_options.add_experimental_option("useAutomationExtension", False)
-
     # save current browsing session to make it persistent
     pwd = pathlib.Path().absolute()
     chrome_options.add_argument(f"--user-data-dir={pwd}\\chrome-data")
+
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option("useAutomationExtension", False)
 
     # instantiate Chrome driver with given Chrome options
     try:
@@ -156,6 +156,9 @@ def main():
     # load tlm balance
     tlm_old = aw.tlm_balance
 
+    # initialize tlm_sum
+    tlm_sum = 0
+
     # activation switch for checking tlm mined per click
     i = False
 
@@ -203,7 +206,7 @@ def main():
                     # to find average rate of tlm mining
                     tlm_sum += tlm_mined
                     average = tlm_sum/mine_loop_count
-                    print(f"Average rate for TLM mining: {average}/claim")
+                    print(f"Average rate for TLM mining: {average:.4f}/claim")
                 except:
                     print("\nUnable to show the average rate & the difference between the claims.")
 
