@@ -208,8 +208,8 @@ def main():
                     print("\nUnable to show the average rate & the difference between the claims.")
 
             if (cpu_pct > resource_limit) or (ram_pct > resource_limit) or (net_pct > resource_limit):
-                print("\nResource utilization is above the set threshold of {} %".format(resource_limit))
-                print("Sleeping for {} seconds\n".format(resource_sleep))
+                print("\nResource utilization is above the set threshold of {} %.".format(resource_limit))
+                print("Sleeping for {} seconds.".format(resource_sleep))
                 for x in range(resource_sleep):
                     time.sleep(1)
                     _print_(".")
@@ -265,7 +265,7 @@ def main():
 
             # if approve button is found
             if btn:
-                print("\n\tFound \"Approve\" button.")
+                print("\n\tFound \"Approve\" button!")
                 btn.click()
                 print("\tApproving transaction.")
                 mine_loop_count += 1
