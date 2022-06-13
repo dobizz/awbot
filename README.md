@@ -34,6 +34,8 @@ run.ps1
 ```
 python awbot.py
 ```
+### Attention
+###### Using bot or any kind of automation is not recommended by the Aliens World. I'm not responsible for any kind of your loss(es). USE AT YOUR OWN RISK!
 
 ### PS
 - ###### "Bot resource(s) throttling" feature disables the check for CPU, NET, RAM usage. This enables the bot to click even when the resources are above 100%.
