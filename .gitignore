@@ -143,3 +143,6 @@ account.txt
 
 # Signin check file
 sign.file
+
+# Throttle file check
+throttle.txt

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import re
 import sys
 import os
 import time
@@ -49,17 +48,17 @@ def main():
     # check for account.txt file
     if os.path.exists("account.txt"):
 
-        # check for file size
+        # check for file size & read
         if os.stat("account.txt").st_size != 0:
-            file = open("account.txt", "r")
-            wallet = file.read()
-            file.close()
+            afile = open("account.txt", "r")
+            wallet = afile.read()
+            afile.close()
 
         # delete the file if found empty account.txt file
         else:
-            print("\nDeleting corrupted \"account.txt\" file in the directory.")
-            time.sleep(1)
+            print("\nDeleting corrupted \"account.txt\".")
             os.remove("account.txt")
+            time.sleep(1)
             print("File deleted.")
             print("Restarting bot.")
             time.sleep(1)
@@ -67,9 +66,9 @@ def main():
 
     # create account.txt file if not found
     else:
-        nfile = open("account.txt", "w")
-        nfile.write(input("\nPlease enter your wax wallet address: "))
-        nfile.close()
+        anfile = open("account.txt", "w")
+        anfile.write(input("\nPlease enter your wax wallet address: "))
+        anfile.close()
         print("Restarting bot.")
         time.sleep(1)
         return
@@ -137,7 +136,7 @@ def main():
 
     # check for sign.file file
     if os.path.exists("sign.file"):
-        print("\nStarting bot in 10 seconds.")
+        print("\nStarting bot in 10 seconds. Delete \"sign.file\" in case of re-login.")
         for x in range(10):
             time.sleep(1)
             _print_(".")
@@ -200,7 +199,7 @@ def main():
                     # to find the value of tlm mined
                     tlm_new = aw.tlm_balance
                     tlm_mined = tlm_new - tlm_old
-                    print(f"TLM mined on last claim: {tlm_mined:.4f}")
+                    print(f"TLM mined in last claim: {tlm_mined:.4f}")
                     tlm_old = tlm_new
 
                     # to find average rate of tlm mining
@@ -208,16 +207,62 @@ def main():
                     avg = tlm_sum/mine_loop_count
                     average = abs(avg)
                     print(f"Average rate for TLM mining: {average:.4f}/claim")
-                except:
-                    print("\nUnable to show the average rate & the difference between the claims.")
 
-            if (cpu_pct > resource_limit) or (ram_pct > resource_limit) or (net_pct > resource_limit):
-                print("\nResource utilization is above the set threshold of {} %.".format(resource_limit))
-                print("Sleeping for {} seconds.".format(resource_sleep))
-                for x in range(resource_sleep):
+                    # to show sum of tlm mined
+                    print(f"Total TLM mined in this session: {tlm_sum:.4f}")
+                except:
+                    print("\nUnable to retrieve the value(s).")
+
+            # check for throttle.txt file
+            if os.path.exists("throttle.txt"):
+
+                # check for file size & read
+                if os.stat("throttle.txt").st_size != 0:
+                    tfile = open("throttle.txt", "r")
+                    throttle = tfile.read()
+                    tfile.close()
+
+                    if throttle == "N" or throttle == "n":
+
+                        # resource utilization throttling
+                        if (cpu_pct > resource_limit) or (ram_pct > resource_limit) or (net_pct > resource_limit):
+                            print("\nResource utilization is above the set threshold of {} %.".format(resource_limit))
+                            print("Sleeping for {} seconds.".format(resource_sleep))
+                            for x in range(resource_sleep):
+                                time.sleep(1)
+                                _print_(".")
+                            continue
+                    
+                    elif throttle == "Y" or throttle == "y":
+                        print("\nResource utilization throttling is OFF. Turn ON by changing value to \"N\" in the \"throttle.txt\" file.")
+
+                    # delete the file if value found other than Y or N
+                    else:
+                        print("\nAppropriate input not found.")
+                        print("Deleting corrupted \"throttle.txt\".")
+                        os.remove("throttle.txt")
+                        time.sleep(1)
+                        print("File deleted.")
+                        print("Restarting bot.")
+                        time.sleep(1)
+                        return
+
+                # delete the file if found empty throttle.txt file
+                else:
+                    print("\nDeleting corrupted \"throttle.txt\".")
+                    os.remove("throttle.txt")
                     time.sleep(1)
-                    _print_(".")
-                continue
+                    print("File deleted.")
+                    print("Restarting bot.")
+                    time.sleep(1)
+                    return
+
+            # create throttle.txt file if not found
+            else:
+                ntfile = open("throttle.txt", "w")
+                ntfile.write(input("\nDo you want to enable the over-utilization of resource(s) [Y/N]: "))
+                ntfile.close()
+                return
 
             # wait for mine button to be found
             print("\nWaiting for \"Mine\" button.")
