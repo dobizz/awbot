@@ -222,7 +222,7 @@ def main():
                     throttle = tfile.read()
                     tfile.close()
 
-                    if throttle == "N" or throttle == "n":
+                    if throttle == "Y" or throttle == "y":
 
                         # resource utilization throttling
                         if (cpu_pct > resource_limit) or (ram_pct > resource_limit) or (net_pct > resource_limit):
@@ -233,7 +233,7 @@ def main():
                                 _print_(".")
                             continue
                     
-                    elif throttle == "Y" or throttle == "y":
+                    elif throttle == "N" or throttle == "n":
                         print("\nResource utilization throttling is OFF. Turn ON by changing value to \"N\" in the \"throttle.txt\" file.")
 
                     # delete the file if value found other than Y or N
@@ -260,7 +260,7 @@ def main():
             # create throttle.txt file if not found
             else:
                 ntfile = open("throttle.txt", "w")
-                ntfile.write(input("\nDo you want to enable the over-utilization of resource(s) [Y/N]: "))
+                ntfile.write(input("\nDo you want to enable the bot resource(s) throttling [Y/N]: "))
                 ntfile.close()
                 return
 
