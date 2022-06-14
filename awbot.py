@@ -104,10 +104,7 @@ def main():
 
     # instantiate Chrome driver with given Chrome options
     try:
-        driver = webdriver.Chrome(
-            service=Service(ChromeDriverManager().install()),
-            options=chrome_options
-        )
+        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
     except TypeError:
         print("\nPlease update your selenium package.")
         driver.quit()
@@ -117,15 +114,7 @@ def main():
     driver.set_page_load_timeout(60)
 
     # instantiate stealth
-    stealth(
-        driver,
-        languages=["en-US", "en"],
-        vendor="Google Inc.",
-        platform="Win32",
-        webgl_vendor="Intel Inc.",
-        renderer="Intel Iris OpenGL Engine",
-        fix_hairline=True,
-    )
+    stealth(driver, languages=["en-US", "en"], vendor="Google Inc.", platform="Win32", webgl_vendor="Intel Inc.", renderer="Intel Iris OpenGL Engine", fix_hairline=True)
 
     # save current window handle
     main_window = driver.current_window_handle
