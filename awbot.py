@@ -90,7 +90,6 @@ def main():
     chrome_options.add_argument("--ignore-certificate-errors")
     chrome_options.add_argument("--ignore-certificate-errors-spki-list")
     chrome_options.add_argument("--ignore-ssl-errors")
-    chrome_options.add_argument("--window-size=0,180")
     chrome_options.add_argument("--mute-audio")
 
     # when there is already a persistent session, you may activate headless mode
@@ -107,7 +106,7 @@ def main():
     try:
         driver = webdriver.Chrome(
             service=Service(ChromeDriverManager().install()),
-            options=chrome_options,
+            options=chrome_options
         )
     except TypeError:
         print("\nPlease update your selenium package.")
@@ -130,6 +129,12 @@ def main():
 
     # save current window handle
     main_window = driver.current_window_handle
+
+    # move the window to the top left of the primary monitor
+    driver.set_window_position(0, 0)
+    
+    # set window size
+    driver.set_window_size(585, 164)
 
     # make GET request
     driver.get(url)
@@ -163,6 +168,9 @@ def main():
 
     # main bot loop
     for loop_count in count(1):
+        # minimize window
+        driver.minimize_window()
+
         # clear terminal
         os.system('cls' if os.name == 'nt' else 'clear')
         try:
@@ -307,6 +315,15 @@ def main():
                 if this_window != main_window:
                     print("\tSwitching to pop-up window.")
                     driver.switch_to.window(this_window)
+                    
+                    # move the window to the top left of the primary monitor
+                    driver.set_window_position(0, 0)
+
+                    # set window size
+                    driver.set_window_size(585, 164)
+
+                    # minimize window
+                    driver.minimize_window()
                     break
 
             # wait for approve button to be visible & click button
