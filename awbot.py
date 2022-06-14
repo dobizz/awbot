@@ -241,12 +241,12 @@ def main():
                 try:
                     # to find the value of tlm mined
                     tlm_new = aw.tlm_balance
-                    tlm_mined = tlm_new - tlm_old
+                    tlm_mined = abs(tlm_new) - abs(tlm_old)
                     print(f"TLM mined in last claim: {tlm_mined:.4f}")
                     tlm_old = tlm_new
 
                     # to find average rate of tlm mining
-                    tlm_sum += tlm_mined
+                    tlm_sum += abs(tlm_mined)
                     avg = tlm_sum/mine_loop_count
                     average = abs(avg)
                     print(f"Average rate for TLM mining: {average:.4f}/claim")
