@@ -8,6 +8,7 @@ h11==0.13.0
 idna==3.3
 lxml==4.9.0
 outcome==1.1.0
+plyer==2.0.0
 pycparser==2.21
 pyOpenSSL==22.0.0
 PySocks==1.7.1

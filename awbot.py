@@ -6,6 +6,8 @@ import random
 import pathlib
 import http.client as httplib
 from itertools import count
+from turtle import title
+from plyer import notification
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
@@ -17,11 +19,11 @@ from selenium_stealth import stealth
 from webdriver_manager.chrome import ChromeDriverManager
 from awapi import Account
 
+path = os.path.dirname(__file__)
 
 def _print_(text: str) -> None:
     sys.stdout.write(text)
     sys.stdout.flush()
-
 
 def main():
     # clear terminal
@@ -34,6 +36,15 @@ def main():
         conn.request("HEAD", "/")
         conn.close()
         print("Internet available.")
+    
+    except KeyboardInterrupt:
+        print("\nStopping bot.")
+
+        # notification for termination
+        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+        driver.quit()
+        sys.exit(0)
+    
     except:
         conn.close()
         print("No Internet. Re-checking in 30 seconds.")
@@ -45,33 +56,42 @@ def main():
     # define game url
     url = "https://play.alienworlds.io"
 
-    # check for account.txt file
-    if os.path.exists("account.txt"):
+    try:
+        # check for account.txt file
+        if os.path.exists("account.txt"):
 
-        # check for file size & read
-        if os.stat("account.txt").st_size != 0:
-            afile = open("account.txt", "r")
-            wallet = afile.read()
-            afile.close()
+            # check for file size & read
+            if os.stat("account.txt").st_size != 0:
+                afile = open("account.txt", "r")
+                wallet = afile.read()
+                afile.close()
 
-        # delete the file if found empty account.txt file
+            # delete the file if found empty account.txt file
+            else:
+                print("\nDeleting corrupted \"account.txt\".")
+                os.remove("account.txt")
+                time.sleep(1)
+                print("File deleted.")
+                print("Restarting bot.")
+                time.sleep(1)
+                return
+
+        # create account.txt file if not found
         else:
-            print("\nDeleting corrupted \"account.txt\".")
-            os.remove("account.txt")
-            time.sleep(1)
-            print("File deleted.")
+            anfile = open("account.txt", "w")
+            anfile.write(input("\nPlease enter your wax wallet address: "))
+            anfile.close()
             print("Restarting bot.")
             time.sleep(1)
             return
+    
+    except KeyboardInterrupt:
+        print("\nStopping bot.")
 
-    # create account.txt file if not found
-    else:
-        anfile = open("account.txt", "w")
-        anfile.write(input("\nPlease enter your wax wallet address: "))
-        anfile.close()
-        print("Restarting bot.")
-        time.sleep(1)
-        return
+        # notification for termination
+        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+        driver.quit()
+        sys.exit(0)  
 
     # create AW Account instance
     aw = Account(wallet)
@@ -105,10 +125,27 @@ def main():
     # instantiate Chrome driver with given Chrome options
     try:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+    
     except TypeError:
         print("\nPlease update your selenium package.")
+
+        # notification for termination
+        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
         driver.quit()
         sys.exit(0)
+    
+    except KeyboardInterrupt:
+        print("\nStopping bot.")
+
+        # notification for termination
+        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+        driver.quit()
+        sys.exit(0)
+    
+    except:
+        print("\nBot encountered an error. Restarting.")
+        time.sleep(1)
+        return
 
     # change page load timeout
     driver.set_page_load_timeout(60)
@@ -119,29 +156,41 @@ def main():
     # save current window handle
     main_window = driver.current_window_handle
 
-    # move the window to the top left of the primary monitor
+    # move the main window to the top left of the primary monitor
     driver.set_window_position(0, 0)
     
-    # set window size
+    # set main window size
     driver.set_window_size(585, 164)
 
     # make GET request
     driver.get(url)
 
-    # check for sign.file file
-    if os.path.exists("sign.file"):
-        print("\nStarting bot in 10 seconds. Delete \"sign.file\" in case of re-login.")
-        for x in range(10):
-            time.sleep(1)
-            _print_(".")
+    try:
+        # check for sign.file file
+        if os.path.exists("sign.file"):
+            print("\nStarting bot in 10 seconds. Delete \"sign.file\" in case of re-login.")
+            for x in range(10):
+                time.sleep(1)
+                _print_(".")
 
-    # create sign.file if not found
-    else:
-        print("\nPausing bot.")
-        input("Please sign-in .Then, press any key to continue.")
-        open("sign.file", "a").close()
+        # create sign.file if not found
+        else:
+            print("\nPausing bot.")
+            input("Please sign-in .Then, press any key to continue.")
+            open("sign.file", "a").close()
 
-    print("\nStarting bot, press \"Ctrl + C\" to stop.")
+        print("\nStarting bot, press \"Ctrl + C\" to stop.")
+    
+    except KeyboardInterrupt:
+        print("\nStopping bot.")
+
+        # notification for termination
+        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+        driver.quit()
+        sys.exit(0)
+
+    # minimizes the main window
+    driver.minimize_window()
 
     # initialize mine loop count
     mine_loop_count = 0
@@ -157,11 +206,9 @@ def main():
 
     # main bot loop
     for loop_count in count(1):
-        # minimize window
-        driver.minimize_window()
-
         # clear terminal
         os.system('cls' if os.name == 'nt' else 'clear')
+
         try:
             # fetch cpu usage details
             cpu_usage = aw.cpu_usage
@@ -192,7 +239,6 @@ def main():
             # show tlm mined per click
             if i:
                 try:
-
                     # to find the value of tlm mined
                     tlm_new = aw.tlm_balance
                     tlm_mined = tlm_new - tlm_old
@@ -269,11 +315,6 @@ def main():
                 try:
                     mine_btn = driver.find_element(By.XPATH, "//span[contains(text(), 'Mine')]")
 
-                except KeyboardInterrupt:
-                    print("\nStopping bot.")
-                    driver.quit()
-                    sys.exit(0)
-
                 # if button is not found
                 except NoSuchElementException:
                     time.sleep(1)
@@ -305,13 +346,13 @@ def main():
                     print("\tSwitching to pop-up window.")
                     driver.switch_to.window(this_window)
                     
-                    # move the window to the top left of the primary monitor
+                    # move the pop-up window to the top left of the primary monitor
                     driver.set_window_position(0, 0)
 
-                    # set window size
+                    # set pop-up window size
                     driver.set_window_size(585, 164)
 
-                    # minimize window
+                    # minimizes the pop-up window
                     driver.minimize_window()
                     break
 
@@ -333,6 +374,9 @@ def main():
             print("\n\tSwitching back to main window.")
             driver.switch_to.window(main_window)
 
+            # minimizes the main window
+            driver.minimize_window()
+
             # show the number of loops done
             print(f"\nTotal number of execution(s): {loop_count}")
 
@@ -350,6 +394,9 @@ def main():
 
         except KeyboardInterrupt:
             print("\nStopping bot.")
+
+            # notification for termination
+            notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
             driver.quit()
             sys.exit(0)
 
@@ -358,12 +405,21 @@ def main():
             print("\nBot encountered an error. Restarting.")
             return
 
+    # notification for termination
+    notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+
     # close the webdriver & exit
     driver.quit()
-
+    sys.exit(0)
 
 while True:
-    assert sys.version_info >= (3, 6), 'Python 3.6+ required.'
+    assert sys.version_info >= (3, 6), "Python 3.6+ required."
 
-    # call main routine
-    main()
+    try:
+        # call main routine
+        main()
+    
+    except:
+        # notification for termination
+        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+        sys.exit(0)
