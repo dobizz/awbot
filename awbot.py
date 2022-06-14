@@ -28,7 +28,7 @@ def main():
     os.system('cls' if os.name == 'nt' else 'clear')
     
     # check internet connection
-    conn = httplib.HTTPConnection("https://www.google.com", timeout = 5)
+    conn = httplib.HTTPConnection("1.1.1.1", timeout = 10)
     try:
         print("Internet check.")
         conn.request("HEAD", "/")
