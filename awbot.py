@@ -25,6 +25,9 @@ def _print_(text: str) -> None:
     sys.stdout.write(text)
     sys.stdout.flush()
 
+# initialize crash count
+crashes = 0
+
 def main():
     # clear terminal
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -368,7 +371,9 @@ def main():
 
             # if approve button could not be found
             else:
-                raise IOError('\n\tUnable to load or find approve button.')
+                notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Unable to load or find approve button.")
+                input('\n\tUnable to load or find approve button. Delete \"sign.file\" in case of re-login, then press any key to continue.')
+                return
 
             # go control back to main window
             print("\n\tSwitching back to main window.")
@@ -402,7 +407,8 @@ def main():
 
         # if any error occured
         except:
-            print("\nBot encountered an error. Restarting.")
+            crashes += 1
+            print(f"\nBot encountered an error. {crashes} crashes since start. Restarting.")
             return
 
     # notification for termination
