@@ -421,11 +421,5 @@ def main():
 while True:
     assert sys.version_info >= (3, 6), "Python 3.6+ required."
 
-    try:
-        # call main routine
-        main()
-    
-    except:
-        # notification for termination
-        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
-        sys.exit(0)
+    # call main routine
+    main()
