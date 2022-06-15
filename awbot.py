@@ -412,11 +412,10 @@ def main():
             return
 
     # notification for termination
-    notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+    notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Restarted.")
 
     # close the webdriver & exit
     driver.quit()
-    sys.exit(0)
 
 while True:
     assert sys.version_info >= (3, 6), "Python 3.6+ required."
