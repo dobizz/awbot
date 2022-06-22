@@ -5,8 +5,8 @@ import time
 import random
 import pathlib
 import http.client as httplib
+from datetime import datetime
 from itertools import count
-from turtle import title
 from plyer import notification
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -14,19 +14,22 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-from selenium.common.exceptions import *
+from selenium.common.exceptions import NoSuchElementException
 from selenium_stealth import stealth
 from webdriver_manager.chrome import ChromeDriverManager
 from awapi import Account
 
+# save starting time of the script
+start = datetime.now()
+
 path = os.path.dirname(__file__)
+
+# variable as condition to exit script
+exit = False
 
 def _print_(text: str) -> None:
     sys.stdout.write(text)
     sys.stdout.flush()
-
-# initialize crash count
-crashes = 0
 
 def main():
     # clear terminal
@@ -42,11 +45,9 @@ def main():
     
     except KeyboardInterrupt:
         print("\nStopping bot.")
-
-        # notification for termination
-        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+        exit = True
         driver.quit()
-        sys.exit(0)
+        exit()
     
     except:
         conn.close()
@@ -90,11 +91,9 @@ def main():
     
     except KeyboardInterrupt:
         print("\nStopping bot.")
-
-        # notification for termination
-        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+        exit = True
         driver.quit()
-        sys.exit(0)  
+        exit()  
 
     # create AW Account instance
     aw = Account(wallet)
@@ -128,45 +127,44 @@ def main():
     # instantiate Chrome driver with given Chrome options
     try:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+            
+        # minimizes the main window
+        driver.minimize_window()
     
     except TypeError:
         print("\nPlease update your selenium package.")
-
-        # notification for termination
-        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+        exit = True
         driver.quit()
-        sys.exit(0)
+        exit()
     
     except KeyboardInterrupt:
         print("\nStopping bot.")
-
-        # notification for termination
-        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+        exit = True
         driver.quit()
-        sys.exit(0)
+        exit()
     
     except:
         print("\nBot encountered an error. Restarting.")
         time.sleep(1)
         return
 
-    # change page load timeout
-    driver.set_page_load_timeout(60)
-
     # instantiate stealth
     stealth(driver, languages=["en-US", "en"], vendor="Google Inc.", platform="Win32", webgl_vendor="Intel Inc.", renderer="Intel Iris OpenGL Engine", fix_hairline=True)
 
     # save current window handle
     main_window = driver.current_window_handle
+    
+    # change page load timeout
+    driver.set_page_load_timeout(60)
 
-    # move the main window to the top left of the primary monitor
-    driver.set_window_position(0, 0)
+    # make GET request
+    driver.get(url)
     
     # set main window size
     driver.set_window_size(585, 164)
 
-    # make GET request
-    driver.get(url)
+    # move the main window to the top left of the primary monitor
+    driver.set_window_position(0, 0)
 
     try:
         # check for sign.file file
@@ -179,21 +177,17 @@ def main():
         # create sign.file if not found
         else:
             print("\nPausing bot.")
-            input("Please sign-in .Then, press any key to continue.")
+            notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Sign-in required.")
+            input("Please sign-in, then press any key to continue.")
             open("sign.file", "a").close()
 
         print("\nStarting bot, press \"Ctrl + C\" to stop.")
     
     except KeyboardInterrupt:
         print("\nStopping bot.")
-
-        # notification for termination
-        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+        exit = True
         driver.quit()
-        sys.exit(0)
-
-    # minimizes the main window
-    driver.minimize_window()
+        exit()
 
     # initialize mine loop count
     mine_loop_count = 0
@@ -235,27 +229,30 @@ def main():
             print("NET: [ {:,} / {:,} B ]\tUsed: {} %".format(net_used, net_max, net_pct))
             print("RAM: [ {:,} / {:,} B ]\tUsed: {} %".format(ram_used, ram_max, ram_pct))
 
+            tlm_new = aw.tlm_balance
+
             # show balances
             print(f"\nWAX Balance: {aw.wax_balance}")
-            print(f"TLM Balance: {aw.tlm_balance}")
+            print(f"TLM Balance: {tlm_new}")
 
             # show tlm mined per click
-            if i:
+            if i and tlm_old < tlm_new:
                 try:
+
                     # to find the value of tlm mined
-                    tlm_new = aw.tlm_balance
-                    tlm_mined = abs(tlm_new) - abs(tlm_old)
+                    tlm_mined = tlm_new - tlm_old
                     print(f"TLM mined in last claim: {tlm_mined:.4f}")
                     tlm_old = tlm_new
 
                     # to find average rate of tlm mining
-                    tlm_sum += abs(tlm_mined)
+                    tlm_sum += tlm_mined
                     avg = tlm_sum/mine_loop_count
-                    average = abs(avg)
-                    print(f"Average rate for TLM mining: {average:.4f}/claim")
+                    print(f"Average rate for TLM mining: {avg:.4f}/claim")
 
                     # to show sum of tlm mined
                     print(f"Total TLM mined in this session: {tlm_sum:.4f}")
+                    print("This session started at: {start}")
+
                 except:
                     print("\nUnable to retrieve the value(s).")
 
@@ -341,38 +338,42 @@ def main():
 
             # wait for pop-up window
             print("\n\tSearching for pop-up window.")
-            time.sleep(3)
+
+            # Wait for the new window or tab
+            WebDriverWait(driver, 60).until(ec.number_of_windows_to_be(2))
 
             # switch control to pop-up window
             for this_window in driver.window_handles:
                 if this_window != main_window:
                     print("\tSwitching to pop-up window.")
                     driver.switch_to.window(this_window)
-                    
-                    # move the pop-up window to the top left of the primary monitor
-                    driver.set_window_position(0, 0)
-
-                    # set pop-up window size
-                    driver.set_window_size(585, 164)
 
                     # minimizes the pop-up window
                     driver.minimize_window()
+
+                    # set pop-up window size
+                    driver.set_window_size(585, 164)
+                    
+                    # move the pop-up window to the top left of the primary monitor
+                    driver.set_window_position(0, 0)
                     break
 
-            # wait for approve button to be visible & click button
-            btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
+            try:
 
-            # if approve button is found
-            if btn:
-                print("\n\tFound \"Approve\" button!")
-                btn.click()
-                print("\tApproving transaction.")
-                mine_loop_count += 1
+                # wait for approve button to be visible & click button
+                btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
 
-            # if approve button could not be found
-            else:
-                notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Unable to load or find approve button.")
-                input('\n\tUnable to load or find approve button. Delete \"sign.file\" in case of re-login, then press any key to continue.')
+                # if button found then it'll be clicked
+                if btn:
+                    print("\n\tFound \"Approve\" button!")
+                    btn.click()
+                    print("\tApproving transaction.")
+                    mine_loop_count += 1
+
+            except:
+                notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Unable to load or find \"Approve\" button.")
+                input('\n\tUnable to load or find \"Approve\" button. Delete \"sign.file\" in case of re-login, then press any key to continue.')
+                exit = True
                 return
 
             # go control back to main window
@@ -388,6 +389,8 @@ def main():
             # show the number of loops done
             print(f"Total number of approval(s): {mine_loop_count}")
 
+            i = True
+
             # delay the bot before starting next loop
             delay = random.randint(delay_min, delay_max)
             print(f"\nSleeping for {delay} seconds.")
@@ -395,24 +398,20 @@ def main():
                 time.sleep(1)
                 _print_(".")
             print("Done sleeping.")
-            i = True
 
         except KeyboardInterrupt:
             print("\nStopping bot.")
-
-            # notification for termination
-            notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Terminated.")
+            exit = True
             driver.quit()
-            sys.exit(0)
+            exit()
 
         # if any error occured
         except:
-            crashes += 1
-            print(f"\nBot encountered an error. {crashes} crashes since start. Restarting.")
+            print("\nBot encountered an error. Restarting.")
             return
 
-    # notification for termination
-    notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script Restarted.")
+    # notification for script restart
+    notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script restarted.")
 
     # close the webdriver & exit
     driver.quit()
@@ -420,5 +419,22 @@ def main():
 while True:
     assert sys.version_info >= (3, 6), "Python 3.6+ required."
 
-    # call main routine
-    main()
+    try:
+        if not exit:
+
+            # call main routine
+            main()
+        
+        else:
+
+            # notification for termination
+            notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script terminated.")
+            print("\nScript terminated.")
+            os._exit(0)
+
+    except:
+
+            # notification for termination
+            notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script unable to restart.")
+            print("\nScript cannot be restarted due to an unknown error.")
+            os._exit(0)
