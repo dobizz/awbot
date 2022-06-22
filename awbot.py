@@ -5,7 +5,8 @@ import time
 import random
 import pathlib
 import http.client as httplib
-from datetime import datetime
+import datetime
+import pytz 
 from itertools import count
 from plyer import notification
 from selenium import webdriver
@@ -20,7 +21,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from awapi import Account
 
 # save starting time of the script
-start = datetime.now()
+start = datetime.datetime.now(pytz.timezone('Asia/Kolkata'))
 
 path = os.path.dirname(__file__)
 
@@ -127,9 +128,6 @@ def main():
     # instantiate Chrome driver with given Chrome options
     try:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-            
-        # minimizes the main window
-        driver.minimize_window()
     
     except TypeError:
         print("\nPlease update your selenium package.")
@@ -159,12 +157,15 @@ def main():
 
     # make GET request
     driver.get(url)
+
+    # move the main window to the top left of the primary monitor
+    driver.set_window_position(7680, 0)
     
     # set main window size
     driver.set_window_size(585, 164)
-
-    # move the main window to the top left of the primary monitor
-    driver.set_window_position(0, 0)
+        
+    # minimizes the main window
+    driver.minimize_window()
 
     try:
         # check for sign.file file
@@ -347,15 +348,15 @@ def main():
                 if this_window != main_window:
                     print("\tSwitching to pop-up window.")
                     driver.switch_to.window(this_window)
-
-                    # minimizes the pop-up window
-                    driver.minimize_window()
+                    
+                    # move the pop-up window to the top left of the primary monitor
+                    driver.set_window_position(7680, 0)
 
                     # set pop-up window size
                     driver.set_window_size(585, 164)
-                    
-                    # move the pop-up window to the top left of the primary monitor
-                    driver.set_window_position(0, 0)
+
+                    # minimizes the pop-up window
+                    driver.minimize_window()
                     break
 
             try:
