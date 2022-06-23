@@ -33,6 +33,8 @@ def _print_(text: str) -> None:
     sys.stdout.flush()
 
 def main():
+    global exit
+
     # clear terminal
     os.system('cls' if os.name == 'nt' else 'clear')
     
@@ -47,8 +49,7 @@ def main():
     except KeyboardInterrupt:
         print("\nStopping bot.")
         exit = True
-        driver.quit()
-        exit()
+        return
     
     except:
         conn.close()
@@ -93,8 +94,7 @@ def main():
     except KeyboardInterrupt:
         print("\nStopping bot.")
         exit = True
-        driver.quit()
-        exit()  
+        return  
 
     # create AW Account instance
     aw = Account(wallet)
@@ -132,14 +132,12 @@ def main():
     except TypeError:
         print("\nPlease update your selenium package.")
         exit = True
-        driver.quit()
-        exit()
+        return
     
     except KeyboardInterrupt:
         print("\nStopping bot.")
         exit = True
-        driver.quit()
-        exit()
+        return
     
     except:
         print("\nBot encountered an error. Restarting.")
@@ -159,7 +157,7 @@ def main():
     driver.get(url)
 
     # move the main window to the top left of the primary monitor
-    driver.set_window_position(7680, 0)
+    driver.set_window_position(1920, 0)
     
     # set main window size
     driver.set_window_size(585, 164)
@@ -188,7 +186,7 @@ def main():
         print("\nStopping bot.")
         exit = True
         driver.quit()
-        exit()
+        return
 
     # initialize mine loop count
     mine_loop_count = 0
@@ -233,8 +231,8 @@ def main():
             tlm_new = aw.tlm_balance
 
             # show balances
-            print(f"\nWAX Balance: {aw.wax_balance}")
-            print(f"TLM Balance: {tlm_new}")
+            print(f"\nWAX Balance: {aw.wax_balance:.4f}")
+            print(f"TLM Balance: {tlm_new:.4f}")
 
             # show tlm mined per click
             if i and tlm_old < tlm_new:
@@ -289,6 +287,7 @@ def main():
                         print("File deleted.")
                         print("Restarting bot.")
                         time.sleep(1)
+                        driver.quit()
                         return
 
                 # delete the file if found empty throttle.txt file
@@ -299,6 +298,7 @@ def main():
                     print("File deleted.")
                     print("Restarting bot.")
                     time.sleep(1)
+                    driver.quit()
                     return
 
             # create throttle.txt file if not found
@@ -306,6 +306,7 @@ def main():
                 ntfile = open("throttle.txt", "w")
                 ntfile.write(input("\nDo you want to enable the bot resource(s) throttling [Y/N]: "))
                 ntfile.close()
+                driver.quit()
                 return
 
             # wait for mine button to be found
@@ -350,7 +351,7 @@ def main():
                     driver.switch_to.window(this_window)
                     
                     # move the pop-up window to the top left of the primary monitor
-                    driver.set_window_position(7680, 0)
+                    driver.set_window_position(1920, 0)
 
                     # set pop-up window size
                     driver.set_window_size(585, 164)
@@ -362,7 +363,7 @@ def main():
             try:
 
                 # wait for approve button to be visible & click button
-                btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
+                btn = WebDriverWait(driver, 40).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
 
                 # if button found then it'll be clicked
                 if btn:
@@ -372,10 +373,37 @@ def main():
                     mine_loop_count += 1
 
             except:
-                notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Unable to load or find \"Approve\" button.")
-                input('\n\tUnable to load or find \"Approve\" button. Delete \"sign.file\" in case of re-login, then press any key to continue.')
-                exit = True
-                return
+
+                try:
+
+                    # wait for cancel button to be visible & click button
+                    btn_can = WebDriverWait(driver, 10).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Cancel')]")))
+
+                    # if cancel button found then it'll be clicked
+                    if btn_can:
+                        print("\n\tFound \"Cancel\" button!")
+                        btn_can.click()
+                        print("\tCancelling transaction.")
+                
+                except:
+
+                    try:
+                        
+                        # wait for login button to be visible
+                        btn_login = WebDriverWait(driver, 10).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Login')]")))
+
+                        # if login button found then print message
+                        if btn_login:
+                            notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script paused. Please \"Login\".")
+                            input("\n\tPlease \"Login\", then press any key to restart.")
+                            driver.quit()
+                            return
+
+                    except:
+                        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script paused. Unable to load or find button(s).")
+                        input('\n\tUnable to load or find button(s). Press any key to restart.')
+                        driver.quit()
+                        return
 
             # go control back to main window
             print("\n\tSwitching back to main window.")
@@ -404,17 +432,15 @@ def main():
             print("\nStopping bot.")
             exit = True
             driver.quit()
-            exit()
+            return
 
         # if any error occured
         except:
             print("\nBot encountered an error. Restarting.")
+            driver.quit()
             return
 
-    # notification for script restart
-    notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script restarted.")
-
-    # close the webdriver & exit
+    # close the webdriver
     driver.quit()
 
 while True:
@@ -422,6 +448,9 @@ while True:
 
     try:
         if not exit:
+
+            # notification for script restart
+            notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script restarted.")
 
             # call main routine
             main()
