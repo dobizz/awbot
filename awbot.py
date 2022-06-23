@@ -5,8 +5,6 @@ import time
 import random
 import pathlib
 import http.client as httplib
-import datetime
-import pytz 
 from itertools import count
 from plyer import notification
 from selenium import webdriver
@@ -20,20 +18,17 @@ from selenium_stealth import stealth
 from webdriver_manager.chrome import ChromeDriverManager
 from awapi import Account
 
-# save starting time of the script
-start = datetime.datetime.now(pytz.timezone('Asia/Kolkata'))
-
 path = os.path.dirname(__file__)
 
 # variable as condition to exit script
-exit = False
+exit_sc = False
 
 def _print_(text: str) -> None:
     sys.stdout.write(text)
     sys.stdout.flush()
 
 def main():
-    global start, path, exit
+    global path, exit_sc
 
     # clear terminal
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -48,7 +43,7 @@ def main():
     
     except KeyboardInterrupt:
         print("\nStopping bot.")
-        exit = True
+        exit_sc = True
         return
     
     except:
@@ -93,7 +88,7 @@ def main():
     
     except KeyboardInterrupt:
         print("\nStopping bot.")
-        exit = True
+        exit_sc = True
         return  
 
     # create AW Account instance
@@ -131,12 +126,12 @@ def main():
     
     except TypeError:
         print("\nPlease update your selenium package.")
-        exit = True
+        exit_sc = True
         return
     
     except KeyboardInterrupt:
         print("\nStopping bot.")
-        exit = True
+        exit_sc = True
         return
     
     except:
@@ -184,7 +179,7 @@ def main():
     
     except KeyboardInterrupt:
         print("\nStopping bot.")
-        exit = True
+        exit_sc = True
         driver.quit()
         return
 
@@ -250,7 +245,6 @@ def main():
 
                     # to show sum of tlm mined
                     print(f"Total TLM mined in this session: {tlm_sum:.4f}")
-                    print("This session started at: {start}")
 
                 except:
                     print("\nUnable to retrieve the value(s).")
@@ -430,7 +424,7 @@ def main():
 
         except KeyboardInterrupt:
             print("\nStopping bot.")
-            exit = True
+            exit_sc = True
             driver.quit()
             return
 
@@ -447,10 +441,7 @@ while True:
     assert sys.version_info >= (3, 6), "Python 3.6+ required."
 
     try:
-        if not exit:
-
-            # notification for script restart
-            notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script restarted.")
+        if not exit_sc:
 
             # call main routine
             main()
