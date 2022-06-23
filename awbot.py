@@ -89,7 +89,12 @@ def main():
     except KeyboardInterrupt:
         print("\nStopping bot.")
         exit_sc = True
-        return  
+        return 
+
+    except:
+        print("\nBot encountered an error. Restarting.")
+        time.sleep(1)
+        return 
 
     # create AW Account instance
     aw = Account(wallet)
@@ -181,6 +186,11 @@ def main():
         print("\nStopping bot.")
         exit_sc = True
         driver.quit()
+        return
+
+    except:
+        print("\nBot encountered an error. Restarting.")
+        time.sleep(1)
         return
 
     # initialize mine loop count
