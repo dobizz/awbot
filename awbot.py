@@ -33,7 +33,7 @@ def _print_(text: str) -> None:
     sys.stdout.flush()
 
 def main():
-    global exit
+    global start, path, exit
 
     # clear terminal
     os.system('cls' if os.name == 'nt' else 'clear')
