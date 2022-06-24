@@ -115,9 +115,6 @@ def main():
     chrome_options.add_argument("--ignore-ssl-errors")
     chrome_options.add_argument("--mute-audio")
 
-    # when there is already a persistent session, you may activate headless mode
-    # chrome_options.add_argument("--headless")
-
     # save current browsing session to make it persistent
     pwd = pathlib.Path().absolute()
     chrome_options.add_argument(f"--user-data-dir={pwd}\\chrome-data")
@@ -155,15 +152,15 @@ def main():
 
     # make GET request
     driver.get(url)
-
-    # move the main window to the top left of the primary monitor
-    driver.set_window_position(1920, 0)
     
     # set main window size
     driver.set_window_size(585, 164)
         
     # minimizes the main window
     driver.minimize_window()
+
+    # move the main window to the top left of the primary monitor
+    driver.set_window_position(1920, 0)
 
     try:
         # check for sign.file file
@@ -345,24 +342,36 @@ def main():
             # wait for pop-up window
             print("\n\tSearching for pop-up window.")
 
-            # Wait for the new window or tab
-            WebDriverWait(driver, 60).until(ec.number_of_windows_to_be(2))
+            # to continue below while loop
+            switch = False
 
-            # switch control to pop-up window
-            for this_window in driver.window_handles:
-                if this_window != main_window:
-                    print("\tSwitching to pop-up window.")
-                    driver.switch_to.window(this_window)
-                    
-                    # move the pop-up window to the top left of the primary monitor
-                    driver.set_window_position(1920, 0)
-
-                    # set pop-up window size
-                    driver.set_window_size(585, 164)
-
-                    # minimizes the pop-up window
-                    driver.minimize_window()
+            while True:
+                
+                if switch:
                     break
+
+                if not switch:
+                    this_window = None
+
+                    # switch control to pop-up window
+                    for this_window in driver.window_handles:
+                        
+                        if this_window != main_window:
+                            print("\tSwitching to pop-up window.")
+                            driver.switch_to.window(this_window)
+
+                            # set pop-up window size
+                            driver.set_window_size(585, 164)
+
+                            # minimizes the pop-up window
+                            driver.minimize_window()
+                            
+                            # move the pop-up window to the top left of the primary monitor
+                            driver.set_window_position(1920, 0)
+
+                            # to exit while loop
+                            switch = True
+                            break
 
             try:
 
