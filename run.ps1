@@ -7,9 +7,9 @@ Do {
         .\venv\Scripts\activate
         $temp = 'True'
     } else {
-        py -m venv venv     # creating venv
+        python -m venv venv     # creating venv
     }
 } While($temp -eq 'False')
 
 # to run the bot
-py awbot.py;
+python awbot.py;
