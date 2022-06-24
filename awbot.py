@@ -125,6 +125,27 @@ def main():
     # instantiate Chrome driver with given Chrome options
     try:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
+        
+        # instantiate stealth
+        stealth(driver, languages=["en-US", "en"], vendor="Google Inc.", platform="Win32", webgl_vendor="Intel Inc.", renderer="Intel Iris OpenGL Engine", fix_hairline=True)
+
+        # save current window handle
+        main_window = driver.current_window_handle
+        
+        # change page load timeout
+        driver.set_page_load_timeout(60)
+
+        # make GET request
+        driver.get(url)
+        
+        # set main window size
+        driver.set_window_size(585, 164)
+            
+        # minimizes the main window
+        driver.minimize_window()
+
+        # move the main window to the top left of the primary monitor
+        driver.set_window_position(1921, 0)
     
     except TypeError:
         print("\nPlease update your selenium package.")
@@ -140,27 +161,6 @@ def main():
         print("\nBot encountered an error. Restarting.")
         time.sleep(1)
         return
-
-    # instantiate stealth
-    stealth(driver, languages=["en-US", "en"], vendor="Google Inc.", platform="Win32", webgl_vendor="Intel Inc.", renderer="Intel Iris OpenGL Engine", fix_hairline=True)
-
-    # save current window handle
-    main_window = driver.current_window_handle
-    
-    # change page load timeout
-    driver.set_page_load_timeout(60)
-
-    # make GET request
-    driver.get(url)
-    
-    # set main window size
-    driver.set_window_size(585, 164)
-        
-    # minimizes the main window
-    driver.minimize_window()
-
-    # move the main window to the top left of the primary monitor
-    driver.set_window_position(1921, 0)
 
     try:
         # check for sign.file file
