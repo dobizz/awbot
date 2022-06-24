@@ -35,6 +35,7 @@ def main():
     
     # check internet connection
     conn = httplib.HTTPConnection("1.1.1.1", timeout = 10)
+    
     try:
         print("Internet check.")
         conn.request("HEAD", "/")
@@ -60,7 +61,6 @@ def main():
     try:
         # check for account.txt file
         if os.path.exists("account.txt"):
-
             # check for file size & read
             if os.stat("account.txt").st_size != 0:
                 afile = open("account.txt", "r")
@@ -226,9 +226,9 @@ def main():
             net_used = net_usage['used']
             net_pct = int(net_used / net_max * 100)
 
-            print("CPU: [ {:,} / {:,} ms ]\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
-            print("NET: [ {:,} / {:,} B ]\tUsed: {} %".format(net_used, net_max, net_pct))
-            print("RAM: [ {:,} / {:,} B ]\tUsed: {} %".format(ram_used, ram_max, ram_pct))
+            print("CPU: [ {:,} / {:,} ms ]\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
+            print("NET: [ {:,} / {:,} B ]\t\tUsed: {} %".format(net_used, net_max, net_pct))
+            print("RAM: [ {:,} / {:,} B ]\t\tUsed: {} %".format(ram_used, ram_max, ram_pct))
 
             tlm_new = aw.tlm_balance
 
@@ -239,7 +239,6 @@ def main():
             # show tlm mined per click
             if i and tlm_old < tlm_new:
                 try:
-
                     # to find the value of tlm mined
                     tlm_mined = tlm_new - tlm_old
                     print(f"TLM mined in last claim: {tlm_mined:.4f}")
@@ -266,7 +265,6 @@ def main():
                     tfile.close()
 
                     if throttle == "Y" or throttle == "y":
-
                         # resource utilization throttling
                         if (cpu_pct > resource_limit) or (ram_pct > resource_limit) or (net_pct > resource_limit):
                             print("\nResource utilization is above the set threshold of {} %.".format(resource_limit))
@@ -345,8 +343,7 @@ def main():
             # to continue below while loop
             switch = False
 
-            while True:
-                
+            while True:                
                 if switch:
                     break
 
@@ -355,7 +352,6 @@ def main():
 
                     # switch control to pop-up window
                     for this_window in driver.window_handles:
-                        
                         if this_window != main_window:
                             print("\tSwitching to pop-up window.")
                             driver.switch_to.window(this_window)
@@ -374,7 +370,6 @@ def main():
                             break
 
             try:
-
                 # wait for approve button to be visible & click button
                 btn = WebDriverWait(driver, 40).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
 
@@ -386,9 +381,7 @@ def main():
                     mine_loop_count += 1
 
             except:
-
                 try:
-
                     # wait for cancel button to be visible & click button
                     btn_can = WebDriverWait(driver, 10).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Cancel')]")))
 
@@ -399,9 +392,7 @@ def main():
                         print("\tCancelling transaction.")
                 
                 except:
-
                     try:
-                        
                         # wait for login button to be visible
                         btn_login = WebDriverWait(driver, 10).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Login')]")))
 
@@ -461,19 +452,16 @@ while True:
 
     try:
         if not exit_sc:
-
             # call main routine
             main()
         
         else:
-
             # notification for termination
             notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script terminated.")
             print("\nScript terminated.")
             os._exit(0)
 
     except:
-
             # notification for termination
             notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script unable to restart.")
             print("\nScript cannot be restarted due to an unknown error.")
