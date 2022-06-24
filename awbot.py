@@ -71,10 +71,8 @@ def main():
             else:
                 print("\nDeleting corrupted \"account.txt\".")
                 os.remove("account.txt")
-                time.sleep(1)
                 print("File deleted.")
                 print("Restarting bot.")
-                time.sleep(1)
                 return
 
         # create account.txt file if not found
@@ -83,7 +81,6 @@ def main():
             anfile.write(input("\nPlease enter your wax wallet address: "))
             anfile.close()
             print("Restarting bot.")
-            time.sleep(1)
             return
     
     except KeyboardInterrupt:
@@ -93,7 +90,6 @@ def main():
 
     except:
         print("\nBot encountered an error. Restarting.")
-        time.sleep(1)
         return 
 
     # create AW Account instance
@@ -159,7 +155,6 @@ def main():
     
     except:
         print("\nBot encountered an error. Restarting.")
-        time.sleep(1)
         return
 
     try:
@@ -187,7 +182,6 @@ def main():
 
     except:
         print("\nBot encountered an error. Restarting.")
-        time.sleep(1)
         return
 
     # initialize mine loop count
@@ -282,10 +276,8 @@ def main():
                         print("\nAppropriate input not found.")
                         print("Deleting corrupted \"throttle.txt\".")
                         os.remove("throttle.txt")
-                        time.sleep(1)
                         print("File deleted.")
                         print("Restarting bot.")
-                        time.sleep(1)
                         driver.quit()
                         return
 
@@ -293,10 +285,8 @@ def main():
                 else:
                     print("\nDeleting corrupted \"throttle.txt\".")
                     os.remove("throttle.txt")
-                    time.sleep(1)
                     print("File deleted.")
                     print("Restarting bot.")
-                    time.sleep(1)
                     driver.quit()
                     return
 
@@ -356,14 +346,20 @@ def main():
                             print("\tSwitching to pop-up window.")
                             driver.switch_to.window(this_window)
 
-                            # set pop-up window size
-                            driver.set_window_size(585, 164)
+                            try:
+                                # set pop-up window size
+                                driver.set_window_size(585, 164)
 
-                            # minimizes the pop-up window
-                            driver.minimize_window()
+                                # minimizes the pop-up window
+                                driver.minimize_window()
+                                
+                                # move the pop-up window to the top left of the primary monitor
+                                driver.set_window_position(1921, 0)
                             
-                            # move the pop-up window to the top left of the primary monitor
-                            driver.set_window_position(1921, 0)
+                            except:
+                                print("\nBot encountered an error. Restarting.")
+                                driver.quit()
+                                return                               
 
                             # to exit while loop
                             switch = True
