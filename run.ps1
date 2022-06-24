@@ -11,8 +11,5 @@ Do {
     }
 } While($temp -eq 'False')
 
-# installing/updating dependencies
-pip install -r requirements.txt
-
 # to run the bot
 py awbot.py;

@@ -160,7 +160,7 @@ def main():
     driver.minimize_window()
 
     # move the main window to the top left of the primary monitor
-    driver.set_window_position(1920, 0)
+    driver.set_window_position(1921, 0)
 
     try:
         # check for sign.file file
@@ -363,7 +363,7 @@ def main():
                             driver.minimize_window()
                             
                             # move the pop-up window to the top left of the primary monitor
-                            driver.set_window_position(1920, 0)
+                            driver.set_window_position(1921, 0)
 
                             # to exit while loop
                             switch = True
@@ -371,7 +371,7 @@ def main():
 
             try:
                 # wait for approve button to be visible & click button
-                btn = WebDriverWait(driver, 40).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
+                btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
 
                 # if button found then it'll be clicked
                 if btn:
@@ -383,7 +383,7 @@ def main():
             except:
                 try:
                     # wait for cancel button to be visible & click button
-                    btn_can = WebDriverWait(driver, 10).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Cancel')]")))
+                    btn_can = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Cancel')]")))
 
                     # if cancel button found then it'll be clicked
                     if btn_can:
@@ -394,7 +394,7 @@ def main():
                 except:
                     try:
                         # wait for login button to be visible
-                        btn_login = WebDriverWait(driver, 10).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Login')]")))
+                        btn_login = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Login')]")))
 
                         # if login button found then print message
                         if btn_login:

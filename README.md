@@ -14,7 +14,7 @@ git clone https://github.com/theDebonair/awbot.git
 cd awbot
 ```
 
-- ###### Install all the required Python packages (Globally, not in VirtualEnv).
+- ###### Install all the required Python packages.
 ```
 pip install -r requirements.txt
 ```
