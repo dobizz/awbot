@@ -19,21 +19,12 @@ cd awbot
 pip install -r requirements.txt
 ```
 
-### Recommendations
-- ###### Use VirtualEnv for different instances of the bot,
-- ###### Use high speed internet for better and error-free functionality.
-
-### Running Instructions (For Windows users)
-- ###### After all the dependencies have been downloaded and installed, simply run "run.ps1" from powershell.
-```
-run.ps1
-```
-
-### Running Instructions (For non-Windows users)
+### Running Instructions
 - ###### After all the dependencies have been downloaded and installed, simply run "awbot.py".
 ```
 python awbot.py
 ```
+
 ### Attention
 ###### Using bot or any kind of automation is not recommended by the Aliens World. I'm not responsible for any kind of your loss(es). USE AT YOUR OWN RISK!
 
@@ -42,9 +33,4 @@ python awbot.py
 - ###### On the first run you need to login to your wax account, on the succeeding runs you will be logged in automatically as the session cookies will be saved.
 - ###### Follow the prompts in the command terminal.
 - ###### You must open the terminal in the same directory where the files are stored.
-- ###### For Windows users, VirtualEnv will be created automatically when following the above instructions.
-- ###### For non- Windows users, please create a VirtualEnv.
-```
-python -m venv venv
-```
 - ###### Feel free to make suggestions, report bugs on this project's [discussions](https://github.com/theDebonair/awbot/discussions) tab.
