@@ -402,12 +402,13 @@ def main():
                                 print("\tSwitching to pop-up window.")
                                 driver.switch_to.window(this_window)
                                 print("\tSwitched successfully to \"{}\".".format(driver.title))
+                                time.sleep(5)
 
                                 # full page screenshot
-                                #total_width = driver.execute_script("return document.body.offsetWidth")
-                                #total_height = driver.execute_script("return document.body.scrollHeight")
-                                #driver.set_window_size(total_width, total_height)
-                                #driver.save_screenshot("sc_popup.png")   # image will be saved as "sc_popup.png" in the bot's directory
+                                total_width = driver.execute_script("return document.body.offsetWidth")
+                                total_height = driver.execute_script("return document.body.scrollHeight")
+                                driver.set_window_size(total_width, total_height)
+                                driver.save_screenshot("sc_popup.png")   # image will be saved as "sc_popup.png" in the bot's directory
 
                             except KeyboardInterrupt:
                                 print("\n\tStopping bot.")
@@ -488,12 +489,13 @@ def main():
             print("\n\tSwitching back to main window.")
             driver.switch_to.window(main_window)
             print("\tSwitched successfully to \"{}\".".format(driver.title))
+            time.sleep(5)
 
             # full page screenshot
-            #total_width = driver.execute_script("return document.body.offsetWidth")
-            #total_height = driver.execute_script("return document.body.scrollHeight")
-            #driver.set_window_size(total_width, total_height)
-            #driver.save_screenshot("sc_main.png")   # image will be saved as "sc_main.png" in the bot's directory
+            total_width = driver.execute_script("return document.body.offsetWidth")
+            total_height = driver.execute_script("return document.body.scrollHeight")
+            driver.set_window_size(total_width, total_height)
+            driver.save_screenshot("sc_main.png")   # image will be saved as "sc_main.png" in the bot's directory
 
             # show the number of loops done
             print(f"\nTotal number of execution(s): {loop_count}")

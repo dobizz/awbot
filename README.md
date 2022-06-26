@@ -31,6 +31,7 @@ python awbot.py
 ### PS
 - ###### "Bot resource(s) throttling" feature disables the check for CPU, NET, RAM usage. This enables the bot to click even when the resources are above 100%.
 - ###### "Headless mode" is the mode where browser will completely run in the background without disturbing you. When login will be required, headless mode will be turned OFF automatically.
+- ###### "Screenshots" of the last updated pages now available in the bot's directory.
 - ###### On the first run you need to login to your wax account, on the succeeding runs you will be logged in automatically as the session cookies will be saved.
 - ###### Follow the prompts in the command terminal.
 - ###### You must open the terminal in the same directory where the files are stored.

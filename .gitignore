@@ -149,3 +149,7 @@ throttle.txt
 
 # vscode config files
 .vscode
+
+# .png files
+sc_main.png
+sc_popup.png
