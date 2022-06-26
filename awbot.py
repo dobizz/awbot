@@ -58,6 +58,10 @@ def main():
     # define game url
     url = "https://play.alienworlds.io"
 
+    # wax signin page
+    signin = "https://all-access.wax.io/"
+
+    # for account.txt file
     try:
         # check for account.txt file
         if os.path.exists("account.txt"):
@@ -90,7 +94,16 @@ def main():
 
     except:
         print("\nBot encountered an error. Restarting.")
-        return 
+        return
+
+    # check for sign.file file
+    if os.path.exists("sign.file"):
+        headless = True
+        sign_file = True
+
+    else:
+        headless = False
+        sign_file = False
 
     # create AW Account instance
     aw = Account(wallet)
@@ -110,20 +123,37 @@ def main():
     chrome_options.add_argument("--ignore-certificate-errors-spki-list")
     chrome_options.add_argument("--ignore-ssl-errors")
     chrome_options.add_argument("--mute-audio")
+    chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
+
+    # headless mode when signed in
+    if headless:
+        # to open in hidden browser window
+        chrome_options.add_argument("--headless")
 
     # save current browsing session to make it persistent
     pwd = pathlib.Path().absolute()
     chrome_options.add_argument(f"--user-data-dir={pwd}\\chrome-data")
 
+    # for older ChromeDriver under version 79.0.3945.16
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome_options.add_experimental_option("useAutomationExtension", False)
+    chrome_options.add_experimental_option('useAutomationExtension', False)
+
+    # for ChromeDriver version 79.0.3945.16 or over
+    chrome_options.add_argument('--disable-blink-features=AutomationControlled')
 
     # instantiate Chrome driver with given Chrome options
     try:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
         
         # instantiate stealth
-        stealth(driver, languages=["en-US", "en"], vendor="Google Inc.", platform="Win32", webgl_vendor="Intel Inc.", renderer="Intel Iris OpenGL Engine", fix_hairline=True)
+        stealth(driver,
+                languages=["en-US", "en"],
+                vendor="Google Inc.",
+                platform="Win32",
+                webgl_vendor="Intel Inc.",
+                renderer="Intel Iris OpenGL Engine",
+                fix_hairline=True,
+                )
 
         # save current window handle
         main_window = driver.current_window_handle
@@ -132,16 +162,17 @@ def main():
         driver.set_page_load_timeout(60)
 
         # make GET request
-        driver.get(url)
-        
-        # set main window size
-        driver.set_window_size(585, 164)
-            
-        # minimizes the main window
-        driver.minimize_window()
+        if headless:
+            driver.get(url)
 
-        # move the main window to the top left of the primary monitor
-        driver.set_window_position(1921, 0)
+        else:
+            driver.get(signin)
+
+        print("\nSuccessfully loaded \"{}\".".format(driver.title))
+        
+        if not headless:
+            # move the main window to the top left of the primary monitor
+            driver.set_window_position(0, 0)
     
     except TypeError:
         print("\nPlease update your selenium package.")
@@ -159,9 +190,9 @@ def main():
 
     try:
         # check for sign.file file
-        if os.path.exists("sign.file"):
-            print("\nStarting bot in 10 seconds. Delete \"sign.file\" in case of re-login.")
-            for x in range(10):
+        if sign_file:
+            print("\nStarting bot in 3 seconds. \n\t- Delete \"sign.file\" in case of re-login. \n\t- Press \"Ctrl + C\" to stop")
+            for x in range(3):
                 time.sleep(1)
                 _print_(".")
 
@@ -171,8 +202,8 @@ def main():
             notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Sign-in required.")
             input("Please sign-in, then press any key to continue.")
             open("sign.file", "a").close()
-
-        print("\nStarting bot, press \"Ctrl + C\" to stop.")
+            print("Restarting bot.")
+            return
     
     except KeyboardInterrupt:
         print("\nStopping bot.")
@@ -246,6 +277,12 @@ def main():
                     # to show sum of tlm mined
                     print(f"Total TLM mined in this session: {tlm_sum:.4f}")
 
+                except KeyboardInterrupt:
+                    print("\nStopping bot.")
+                    exit_sc = True
+                    driver.quit()
+                    return
+
                 except:
                     print("\nUnable to retrieve the value(s).")
 
@@ -311,21 +348,39 @@ def main():
                     time.sleep(1)
                     _print_(".")
 
-                # if button is found
+                except KeyboardInterrupt:
+                    print("\nStopping bot.")
+                    exit_sc = True
+                    driver.quit()
+                    return
+
+                # if button is found, then click
                 else:
                     print("\nFound \"Mine\" button!")
-
-                    # click
                     mine_btn.click()
                     break
 
             # wait for claim button
             print("\nSearching for \"Claim\" button.")
-            claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//span[contains(text(), 'Claim Mine')]")))
-            print("Found \"Claim\" button!")
+            
+            try:
+                claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//span[contains(text(), 'Claim Mine')]")))
+                print("Found \"Claim\" button!")
 
-            # click claim button
-            claim_btn.click()
+                # click claim button
+                claim_btn.click()
+            
+            except KeyboardInterrupt:
+                print("\nStopping bot.")
+                exit_sc = True
+                driver.quit()
+                return
+
+            except:
+                notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script restarting. Unable to load or find \"Claim\" button.")
+                print('\n\tUnable to load or find \"Claim\" button. Restarting.')
+                driver.quit()
+                return
 
             # wait for pop-up window
             print("\n\tSearching for pop-up window.")
@@ -337,27 +392,31 @@ def main():
                 if switch:
                     break
 
-                if not switch:
+                else:
                     this_window = None
 
                     # switch control to pop-up window
                     for this_window in driver.window_handles:
                         if this_window != main_window:
-                            print("\tSwitching to pop-up window.")
-                            driver.switch_to.window(this_window)
-
                             try:
-                                # set pop-up window size
-                                driver.set_window_size(585, 164)
+                                print("\tSwitching to pop-up window.")
+                                driver.switch_to.window(this_window)
+                                print("\tSwitched successfully to \"{}\".".format(driver.title))
 
-                                # minimizes the pop-up window
-                                driver.minimize_window()
-                                
-                                # move the pop-up window to the top left of the primary monitor
-                                driver.set_window_position(1921, 0)
+                                # full page screenshot
+                                #total_width = driver.execute_script("return document.body.offsetWidth")
+                                #total_height = driver.execute_script("return document.body.scrollHeight")
+                                #driver.set_window_size(total_width, total_height)
+                                #driver.save_screenshot("sc_popup.png")   # image will be saved as "sc_popup.png" in the bot's directory
+
+                            except KeyboardInterrupt:
+                                print("\n\tStopping bot.")
+                                exit_sc = True
+                                driver.quit()
+                                return
                             
                             except:
-                                print("\nBot encountered an error. Restarting.")
+                                print("\n\tBot encountered an error. Restarting.")
                                 driver.quit()
                                 return                               
 
@@ -365,9 +424,10 @@ def main():
                             switch = True
                             break
 
+            # for pop-up window click(s)
             try:
                 # wait for approve button to be visible & click button
-                btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
+                btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//div[contains(text(), 'Approve')]")))
 
                 # if button found then it'll be clicked
                 if btn:
@@ -376,41 +436,64 @@ def main():
                     print("\tApproving transaction.")
                     mine_loop_count += 1
 
+            except KeyboardInterrupt:
+                print("\n\tStopping bot.")
+                exit_sc = True
+                driver.quit()
+                return
+
             except:
                 try:
                     # wait for cancel button to be visible & click button
-                    btn_can = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Cancel')]")))
+                    btn_can = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//div[contains(text(), 'Cancel')]")))
 
                     # if cancel button found then it'll be clicked
                     if btn_can:
                         print("\n\tFound \"Cancel\" button!")
                         btn_can.click()
                         print("\tCancelling transaction.")
+
+                except KeyboardInterrupt:
+                    print("\n\tStopping bot.")
+                    exit_sc = True
+                    driver.quit()
+                    return
                 
                 except:
                     try:
                         # wait for login button to be visible
-                        btn_login = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Login')]")))
+                        btn_login = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//div[contains(text(), 'Login')]")))
 
-                        # if login button found then print message
+                        # if login button found then print message & restart
                         if btn_login:
-                            notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script paused. Please \"Login\".")
-                            input("\n\tPlease \"Login\", then press any key to restart.")
+                            notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Please \"Login\".")
+                            os.remove("sign.file")
+                            print("\n\tRestarting bot.")
                             driver.quit()
                             return
 
+                    except KeyboardInterrupt:
+                        print("\n\tStopping bot.")
+                        exit_sc = True
+                        driver.quit()
+                        return
+
                     except:
-                        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script paused. Unable to load or find button(s).")
-                        input('\n\tUnable to load or find button(s). Press any key to restart.')
+                        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script restarting. Unable to load or find button(s).")
+                        print('\n\tUnable to load or find button(s). Restarting.')
                         driver.quit()
                         return
 
             # go control back to main window
             print("\n\tSwitching back to main window.")
             driver.switch_to.window(main_window)
+            print("\tSwitched successfully to \"{}\".".format(driver.title))
 
-            # minimizes the main window
-            driver.minimize_window()
+            # full page screenshot
+            #total_width = driver.execute_script("return document.body.offsetWidth")
+            #total_height = driver.execute_script("return document.body.scrollHeight")
+            #driver.set_window_size(total_width, total_height)
+            #driver.save_screenshot("sc_main.png")   # image will be saved as "sc_main.png" in the bot's directory
 
             # show the number of loops done
             print(f"\nTotal number of execution(s): {loop_count}")
@@ -457,8 +540,14 @@ while True:
             print("\nScript terminated.")
             os._exit(0)
 
+    except KeyboardInterrupt:
+        # notification for termination
+        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script terminated.")
+        print("\nScript terminated.")
+        os._exit(0)
+
     except:
-            # notification for termination
-            notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script unable to restart.")
-            print("\nScript cannot be restarted due to an unknown error.")
-            os._exit(0)
+        # notification for termination
+        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script unable to restart.")
+        print("\nScript cannot be restarted due to an unknown error.")
+        os._exit(0)

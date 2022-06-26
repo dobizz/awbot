@@ -146,3 +146,6 @@ sign.file
 
 # Throttle file check
 throttle.txt
+
+# vscode config files
+.vscode
