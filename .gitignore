@@ -151,5 +151,4 @@ throttle.txt
 .vscode
 
 # .png files
-sc_main.png
-sc_popup.png
+*.png
