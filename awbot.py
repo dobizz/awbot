@@ -357,6 +357,13 @@ def main():
                 # if button is found, then click
                 else:
                     print("\nFound \"Mine\" button!")
+
+                    # full page screenshot
+                    total_width = driver.execute_script("return document.body.offsetWidth")
+                    total_height = driver.execute_script("return document.body.scrollHeight")
+                    driver.set_window_size(total_width, total_height)
+                    driver.save_screenshot("sc_main_mine.png")   # image will be saved as "sc_main_mine.png" in the bot's directory
+
                     mine_btn.click()
                     break
 
@@ -366,6 +373,12 @@ def main():
             try:
                 claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//span[contains(text(), 'Claim Mine')]")))
                 print("Found \"Claim\" button!")
+
+                # full page screenshot
+                total_width = driver.execute_script("return document.body.offsetWidth")
+                total_height = driver.execute_script("return document.body.scrollHeight")
+                driver.set_window_size(total_width, total_height)
+                driver.save_screenshot("sc_main_claim.png")   # image will be saved as "sc_main_claim.png" in the bot's directory
 
                 # click claim button
                 claim_btn.click()
@@ -402,13 +415,6 @@ def main():
                                 print("\tSwitching to pop-up window.")
                                 driver.switch_to.window(this_window)
                                 print("\tSwitched successfully to \"{}\".".format(driver.title))
-                                time.sleep(5)
-
-                                # full page screenshot
-                                total_width = driver.execute_script("return document.body.offsetWidth")
-                                total_height = driver.execute_script("return document.body.scrollHeight")
-                                driver.set_window_size(total_width, total_height)
-                                driver.save_screenshot("sc_popup.png")   # image will be saved as "sc_popup.png" in the bot's directory
 
                             except KeyboardInterrupt:
                                 print("\n\tStopping bot.")
@@ -428,11 +434,18 @@ def main():
             # for pop-up window click(s)
             try:
                 # wait for approve button to be visible & click button
-                btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//div[contains(text(), 'Approve')]")))
+                btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
 
                 # if button found then it'll be clicked
                 if btn:
                     print("\n\tFound \"Approve\" button!")
+
+                    # full page screenshot
+                    total_width = driver.execute_script("return document.body.offsetWidth")
+                    total_height = driver.execute_script("return document.body.scrollHeight")
+                    driver.set_window_size(total_width, total_height)
+                    driver.save_screenshot("sc_popup_approve.png")   # image will be saved as "sc_popup_approve.png" in the bot's directory
+
                     btn.click()
                     print("\tApproving transaction.")
                     mine_loop_count += 1
@@ -446,11 +459,18 @@ def main():
             except:
                 try:
                     # wait for cancel button to be visible & click button
-                    btn_can = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//div[contains(text(), 'Cancel')]")))
+                    btn_can = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Cancel')]")))
 
                     # if cancel button found then it'll be clicked
                     if btn_can:
                         print("\n\tFound \"Cancel\" button!")
+
+                        # full page screenshot
+                        total_width = driver.execute_script("return document.body.offsetWidth")
+                        total_height = driver.execute_script("return document.body.scrollHeight")
+                        driver.set_window_size(total_width, total_height)
+                        driver.save_screenshot("sc_popup_can.png")   # image will be saved as "sc_popup_can.png" in the bot's directory
+
                         btn_can.click()
                         print("\tCancelling transaction.")
 
@@ -463,11 +483,18 @@ def main():
                 except:
                     try:
                         # wait for login button to be visible
-                        btn_login = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//div[contains(text(), 'Login')]")))
+                        btn_login = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Login')]")))
 
                         # if login button found then print message & restart
                         if btn_login:
                             notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Please \"Login\".")
+                            
+                            # full page screenshot
+                            total_width = driver.execute_script("return document.body.offsetWidth")
+                            total_height = driver.execute_script("return document.body.scrollHeight")
+                            driver.set_window_size(total_width, total_height)
+                            driver.save_screenshot("sc_popup_login.png")   # image will be saved as "sc_popup_login.png" in the bot's directory
+
                             os.remove("sign.file")
                             print("\n\tRestarting bot.")
                             driver.quit()
@@ -489,7 +516,7 @@ def main():
             print("\n\tSwitching back to main window.")
             driver.switch_to.window(main_window)
             print("\tSwitched successfully to \"{}\".".format(driver.title))
-            time.sleep(5)
+            time.sleep(3)
 
             # full page screenshot
             total_width = driver.execute_script("return document.body.offsetWidth")
