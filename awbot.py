@@ -136,10 +136,10 @@ def main():
 
     # for older ChromeDriver under version 79.0.3945.16
     chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome_options.add_experimental_option('useAutomationExtension', False)
+    chrome_options.add_experimental_option("useAutomationExtension", False)
 
     # for ChromeDriver version 79.0.3945.16 or over
-    chrome_options.add_argument('--disable-blink-features=AutomationControlled')
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
 
     # instantiate Chrome driver with given Chrome options
     try:
@@ -167,12 +167,9 @@ def main():
 
         else:
             driver.get(signin)
+            driver.set_window_position(0, 0)
 
         print("\nSuccessfully loaded \"{}\".".format(driver.title))
-        
-        if not headless:
-            # move the main window to the top left of the primary monitor
-            driver.set_window_position(0, 0)
     
     except TypeError:
         print("\nPlease update your selenium package.")
@@ -198,6 +195,11 @@ def main():
 
         # create sign.file if not found
         else:
+            driver.execute_script("""
+                var wallet = arguments[0];
+                document.title = wallet;
+                alert(wallet);
+            """, wallet)
             print("\nPausing bot.")
             notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Sign-in required.")
             input("Please sign-in, then press any key to continue.")
