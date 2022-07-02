@@ -264,9 +264,9 @@ def main():
 
             # show tlm mined per click
             if i and tlm_old < tlm_new:
-                print(f"TLM Balance: {tlm_new:.4f}")
-                
                 try:
+                    print(f"TLM Balance: {tlm_new:.4f}")
+                    
                     # to find the value of tlm mined
                     tlm_mined = tlm_new - tlm_old
                     print(f"TLM mined in last claim: {tlm_mined:.4f}")
