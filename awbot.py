@@ -395,7 +395,6 @@ def main():
                 return
 
             except:
-                notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script restarting. Unable to load or find \"Claim\" button.")
                 print('\n\tUnable to load or find \"Claim\" button. Restarting.')
                 driver.quit()
                 return
@@ -464,7 +463,7 @@ def main():
             except:
                 try:
                     # wait for cancel button to be visible & click button
-                    btn_can = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Cancel')]")))
+                    btn_can = WebDriverWait(driver, 10).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Cancel')]")))
 
                     # if cancel button found then it'll be clicked
                     if btn_can:
@@ -488,7 +487,7 @@ def main():
                 except:
                     try:
                         # wait for login button to be visible
-                        btn_login = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Login')]")))
+                        btn_login = WebDriverWait(driver, 10).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Login')]")))
 
                         # if login button found then print message & restart
                         if btn_login:
@@ -512,7 +511,6 @@ def main():
                         return
 
                     except:
-                        notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Script restarting. Unable to load or find button(s).")
                         print('\n\tUnable to load or find button(s). Restarting.')
                         driver.quit()
                         return
