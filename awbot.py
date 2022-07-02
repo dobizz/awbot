@@ -68,7 +68,7 @@ def main():
             # check for file size & read
             if os.stat("account.txt").st_size != 0:
                 afile = open("account.txt", "r")
-                wallet = afile.read()
+                wallet = afile.read().splitlines()
                 afile.close()
 
             # delete the file if found empty account.txt file
@@ -297,7 +297,7 @@ def main():
                 # check for file size & read
                 if os.stat("throttle.txt").st_size != 0:
                     tfile = open("throttle.txt", "r")
-                    throttle = tfile.read()
+                    throttle = tfile.read().splitlines()
                     tfile.close()
 
                     if throttle == "Y" or throttle == "y":
