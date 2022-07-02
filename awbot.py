@@ -346,7 +346,7 @@ def main():
             while True:
                 # try to find mine button
                 try:
-                    mine_btn = driver.find_element(By.XPATH, "//*[contains(text(), 'Mine')]")
+                    mine_btn = driver.find_element(By.XPATH, "//*[starts-with(text(), 'Mine')]")
 
                 # if button is not found
                 except NoSuchElementException:
@@ -376,7 +376,7 @@ def main():
             print("\nSearching for \"Claim\" button.")
             
             try:
-                claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Claim Mine')]")))
+                claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[starts-with(text(), 'Claim')]")))
                 print("Found \"Claim\" button!")
 
                 # full page screenshot
