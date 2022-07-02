@@ -261,10 +261,11 @@ def main():
 
             # show balances
             print(f"\nWAX Balance: {aw.wax_balance:.4f}")
-            print(f"TLM Balance: {tlm_new:.4f}")
 
             # show tlm mined per click
             if i and tlm_old < tlm_new:
+                print(f"TLM Balance: {tlm_new:.4f}")
+                
                 try:
                     # to find the value of tlm mined
                     tlm_mined = tlm_new - tlm_old
@@ -343,7 +344,7 @@ def main():
             while True:
                 # try to find mine button
                 try:
-                    mine_btn = driver.find_element(By.XPATH, "//span[contains(text(), 'Mine')]")
+                    mine_btn = driver.find_element(By.XPATH, "//*[contains(text(), 'Mine')]")
 
                 # if button is not found
                 except NoSuchElementException:
@@ -373,7 +374,7 @@ def main():
             print("\nSearching for \"Claim\" button.")
             
             try:
-                claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//span[contains(text(), 'Claim Mine')]")))
+                claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Claim Mine')]")))
                 print("Found \"Claim\" button!")
 
                 # full page screenshot
