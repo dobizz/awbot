@@ -108,6 +108,8 @@ def main():
     # create AW Account instance
     aw = Account(wallet)
 
+    print("\nWallet address: \"{}\"".format(wallet))
+
     # define range for loop delay
     delay_min = 60          # min delay before next loop
     delay_max = 300         # max delay before next loop
