@@ -341,17 +341,18 @@ def main():
                 return
 
             # wait for mine button to be found
-            print("\nWaiting for \"Mine\" button.")
+            print("\nSearching for \"Mine\" button.")
 
             while True:
                 # try to find mine button
                 try:
-                    mine_btn = driver.find_element(By.XPATH, "//*[starts-with(text(), 'Mine')]")
+                    mine_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[starts-with(text(), 'Mine')]")))
 
                 # if button is not found
                 except NoSuchElementException:
-                    time.sleep(1)
-                    _print_(".")
+                    print('\n\tUnable to load or find \"Mine\" button. Restarting.')
+                    driver.quit()
+                    return
 
                 except KeyboardInterrupt:
                     print("\nStopping bot.")
