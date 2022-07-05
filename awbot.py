@@ -23,6 +23,12 @@ path = os.path.dirname(__file__)
 # variable as condition to exit script
 exit_sc = False
 
+# initialize loop count
+loop_count = 0
+
+# initialize mine loop count
+mine_loop_count = 0
+
 def _print_(text: str) -> None:
     sys.stdout.write(text)
     sys.stdout.flush()
@@ -219,9 +225,6 @@ def main():
         print("\nBot encountered an error. Restarting.")
         return
 
-    # initialize mine loop count
-    mine_loop_count = 0
-
     # load tlm balance
     tlm_old = aw.tlm_balance
 
@@ -232,7 +235,9 @@ def main():
     i = False
 
     # main bot loop
-    for loop_count in count(1):
+    for count in count(1):
+        loop_count += 1
+
         # clear terminal
         os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -264,11 +269,15 @@ def main():
             # show balances
             print(f"\nWAX Balance: {aw.wax_balance:.4f}")
 
+            try:
+                print(f"TLM Balance: {tlm_new:.4f}")
+            
+            except:
+                print("\nUnable to retrieve the TLM value.")
+
             # show tlm mined per click
             if i and tlm_old < tlm_new:
-                try:
-                    print(f"TLM Balance: {tlm_new:.4f}")
-                    
+                try:                    
                     # to find the value of tlm mined
                     tlm_mined = tlm_new - tlm_old
                     print(f"TLM mined in last claim: {tlm_mined:.4f}")
@@ -289,7 +298,7 @@ def main():
                     return
 
                 except:
-                    print("\nUnable to retrieve the value(s).")
+                    print("\nUnable to show the value(s).")
 
             # check for throttle.txt file
             if os.path.exists("throttle.txt"):
