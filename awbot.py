@@ -34,7 +34,7 @@ def _print_(text: str) -> None:
     sys.stdout.flush()
 
 def main():
-    global path, exit_sc
+    global path, exit_sc, loop_count, mine_loop_count
 
     # clear terminal
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -235,7 +235,7 @@ def main():
     i = False
 
     # main bot loop
-    for count in count(1):
+    for y in count(1):
         loop_count += 1
 
         # clear terminal
@@ -264,23 +264,23 @@ def main():
             print("NET: [ {:,} / {:,} B ]\t\tUsed: {} %".format(net_used, net_max, net_pct))
             print("RAM: [ {:,} / {:,} B ]\t\tUsed: {} %".format(ram_used, ram_max, ram_pct))
 
-            tlm_new = aw.tlm_balance
-
             # show balances
             print(f"\nWAX Balance: {aw.wax_balance:.4f}")
 
             try:
-                print(f"TLM Balance: {tlm_new:.4f}")
+                print(f"TLM Balance: {aw.tlm_balance:.4f}")
             
             except:
-                print("\nUnable to retrieve the TLM value.")
+                print("Unable to retrieve the TLM value.")
+
+            tlm_new = aw.tlm_balance
 
             # show tlm mined per click
             if i and tlm_old < tlm_new:
                 try:                    
                     # to find the value of tlm mined
                     tlm_mined = tlm_new - tlm_old
-                    print(f"TLM mined in last claim: {tlm_mined:.4f}")
+                    print(f"\nTLM mined in last claim: {tlm_mined:.4f}")
                     tlm_old = tlm_new
 
                     # to find average rate of tlm mining
