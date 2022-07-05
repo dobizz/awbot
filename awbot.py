@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from ast import And
 import sys
 import os
 import time
@@ -67,6 +68,9 @@ def main():
     # wax signin page
     signin = "https://all-access.wax.io/"
 
+    # alcor to sell tlm
+    sell = "https://wax.alcor.exchange/trade/tlm-alien.worlds_wax-eosio.token"
+
     # for account.txt file
     try:
         # check for account.txt file
@@ -102,11 +106,16 @@ def main():
         print("\nBot encountered an error. Restarting.")
         return
 
-    # check for sign.file file
-    if os.path.exists("sign.file"):
+    # check for sign.file and sell.file file
+    if os.path.exists("sell.file"):
+        print("\n\"sell.file\" found.")
+        headless = False
+        sell_file = True
+
+    elif os.path.exists("sign.file"):
         headless = True
         sign_file = True
-
+        
     else:
         headless = False
         sign_file = False
@@ -174,8 +183,18 @@ def main():
             driver.get(url)
 
         else:
-            driver.get(signin)
-            driver.set_window_position(0, 0)
+            if sell_file:
+                driver.get(sell)
+                driver.set_window_position(0, 0)
+                input("\nPress any key when selling of \"TLM\" tokens is done.")
+                os.remove("sell.file")
+                print("\"sell.file\" deleted.")
+                print("Restarting bot.")
+                return
+
+            else:
+                driver.get(signin)
+                driver.set_window_position(0, 0)
 
         print("\nSuccessfully loaded \"{}\".".format(driver.title))
     
@@ -241,7 +260,7 @@ def main():
         # clear terminal
         os.system('cls' if os.name == 'nt' else 'clear')
 
-        print("\nWallet address: \"{}\"".format(wallet))
+        print("Wallet address: \"{}\"".format(wallet))
 
         try:
             # fetch cpu usage details
@@ -262,7 +281,7 @@ def main():
             net_used = net_usage['used']
             net_pct = int(net_used / net_max * 100)
 
-            print("CPU: [ {:,} / {:,} ms ]\t\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
+            print("\nCPU: [ {:,} / {:,} ms ]\t\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
             print("NET: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(net_used, net_max, net_pct))
             print("RAM: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(ram_used, ram_max, ram_pct))
 
