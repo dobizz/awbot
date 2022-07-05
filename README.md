@@ -37,6 +37,6 @@ python awbot.py
 - ###### You must open the terminal in the same directory where the files are stored.
 - ###### Feel free to make suggestions, report bugs on this project's [discussions](https://github.com/theDebonair/awbot/discussions) tab.
 
-### Want to buy me a mug of coffee?
+### Want to buy me a lambo?
 - ###### WAX: xau3c.c.wam
 - ###### BNB, ETH: 0xaA98aAE37F98ce7d657f4472e14891266c13e321
