@@ -20,14 +20,14 @@ from awapi import Account
 
 path = os.path.dirname(__file__)
 
-# variable as condition to exit script
-exit_sc = False
-
 # initialize loop count
 loop_count = 0
 
 # initialize mine loop count
 mine_loop_count = 0
+
+# variable as condition to exit script
+exit_sc = False
 
 def _print_(text: str) -> None:
     sys.stdout.write(text)
@@ -241,6 +241,8 @@ def main():
         # clear terminal
         os.system('cls' if os.name == 'nt' else 'clear')
 
+        print("\nWallet address: \"{}\"".format(wallet))
+
         try:
             # fetch cpu usage details
             cpu_usage = aw.cpu_usage
@@ -260,9 +262,9 @@ def main():
             net_used = net_usage['used']
             net_pct = int(net_used / net_max * 100)
 
-            print("CPU: [ {:,} / {:,} ms ]\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
-            print("NET: [ {:,} / {:,} B ]\t\tUsed: {} %".format(net_used, net_max, net_pct))
-            print("RAM: [ {:,} / {:,} B ]\t\tUsed: {} %".format(ram_used, ram_max, ram_pct))
+            print("CPU: [ {:,} / {:,} ms ]\t\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
+            print("NET: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(net_used, net_max, net_pct))
+            print("RAM: [ {:,} / {:,} B ]\t\t\tUsed: {} %".format(ram_used, ram_max, ram_pct))
 
             # show balances
             print(f"\nWAX Balance: {aw.wax_balance:.4f}")
