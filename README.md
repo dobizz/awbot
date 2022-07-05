@@ -28,13 +28,17 @@ python awbot.py
 ### Attention
 ###### Using bot or any kind of automation is not recommended by the Aliens World. I'm not responsible for any kind of your loss(es). USE AT YOUR OWN RISK!
 
-### PS
+### Features
 - ###### "Bot resource(s) throttling" feature disables the check for CPU, NET, RAM usage. This enables the bot to click even when the resources are above 100%.
 - ###### "Headless mode" is the mode where browser will completely run in the background without disturbing you. When login will be required, headless mode will be turned OFF automatically.
 - ###### "Screenshots" of the last updated pages now available in the bot's directory.
+- ###### Added a feature to sell the "TLM" tokens. This can be done by creating a file "sell.file" in the bot's directory.
+
+### PS
 - ###### On the first run you need to login to your wax account, on the succeeding runs you will be logged in automatically as the session cookies will be saved.
 - ###### Follow the prompts in the command terminal.
 - ###### You must open the terminal in the same directory where the files are stored.
+- ###### To prevent any errors, click the "Mine" button and "claim" manually very first time of using the bot. Their is some issue with WAX wallet, or you must have some "TLM" tokens in your wallet.
 - ###### Feel free to make suggestions, report bugs on this project's [discussions](https://github.com/theDebonair/awbot/discussions) tab.
 
 ### Want to buy me a lambo?
