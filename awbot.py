@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from ast import And
 import sys
 import os
 import time
@@ -30,12 +29,16 @@ mine_loop_count = 0
 # variable as condition to exit script
 exit_sc = False
 
+sell_file = False
+
+sign_file = True
+
 def _print_(text: str) -> None:
     sys.stdout.write(text)
     sys.stdout.flush()
 
 def main():
-    global path, exit_sc, loop_count, mine_loop_count
+    global path, exit_sc, loop_count, mine_loop_count, sell_file, sign_file
 
     # clear terminal
     os.system('cls' if os.name == 'nt' else 'clear')
