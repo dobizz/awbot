@@ -344,7 +344,7 @@ def main():
                             continue
                     
                     elif throttle == "N" or throttle == "n":
-                        print("\nResource utilization throttling is OFF. Turn ON by changing value to \"N\" in the \"throttle.txt\" file.")
+                        print("\nResource utilization throttling is OFF. Turn ON by changing value to \"Y\" in the \"throttle.txt\" file.")
 
                     # delete the file if value found other than Y or N
                     else:
