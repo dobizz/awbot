@@ -395,7 +395,7 @@ def main():
 
                 # if button is found, then click
                 else:
-                    print("\nFound \"Mine\" button!")
+                    print("Found \"Mine\" button!")
 
                     # full page screenshot
                     total_width = driver.execute_script("return document.body.offsetWidth")
