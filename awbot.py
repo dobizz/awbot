@@ -126,7 +126,7 @@ def main():
     # create AW Account instance
     aw = Account(wallet)
 
-    print("\nWallet address: \"{}\"".format(wallet))
+    print(f"\nWallet address: \"{wallet}\"")
 
     # define range for loop delay
     delay_min = 60          # min delay before next loop
@@ -199,7 +199,7 @@ def main():
                 driver.get(signin)
                 driver.set_window_position(0, 0)
 
-        print("\nSuccessfully loaded \"{}\".".format(driver.title))
+        print(f"\nSuccessfully loaded \"{driver.title}\".")
     
     except TypeError:
         print("\nPlease update your selenium package.")
@@ -263,7 +263,7 @@ def main():
         # clear terminal
         os.system('cls' if os.name == 'nt' else 'clear')
 
-        print("Wallet address: \"{}\"".format(wallet))
+        print(f"Wallet address: \"{wallet}\"")
 
         try:
             # fetch cpu usage details
@@ -336,8 +336,8 @@ def main():
                     if throttle == "Y" or throttle == "y":
                         # resource utilization throttling
                         if (cpu_pct > resource_limit) or (ram_pct > resource_limit) or (net_pct > resource_limit):
-                            print("\nResource utilization is above the set threshold of {} %.".format(resource_limit))
-                            print("Sleeping for {} seconds.".format(resource_sleep))
+                            print(f"\nResource utilization is above the set threshold of {resource_limit} %.")
+                            print(f"Sleeping for {resource_sleep} seconds.")
                             for x in range(resource_sleep):
                                 time.sleep(1)
                                 _print_(".")
@@ -381,17 +381,16 @@ def main():
                 try:
                     mine_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[starts-with(text(), 'Mine')]")))
 
-                # if button is not found
-                except NoSuchElementException:
-                    print('\n\tUnable to load or find \"Mine\" button. Restarting.')
-                    driver.quit()
-                    return
-
                 except KeyboardInterrupt:
                     print("\nStopping bot.")
                     exit_sc = True
                     driver.quit()
                     return
+
+                # if button is not found
+                except:
+                    print('\n\tUnable to load or find \"Mine\" button.')
+                    break
 
                 # if button is found, then click
                 else:
@@ -452,7 +451,7 @@ def main():
                             try:
                                 print("\tSwitching to pop-up window.")
                                 driver.switch_to.window(this_window)
-                                print("\tSwitched successfully to \"{}\".".format(driver.title))
+                                print(f"\tSwitched successfully to \"{driver.title}\".")
 
                             except KeyboardInterrupt:
                                 print("\n\tStopping bot.")
@@ -552,7 +551,7 @@ def main():
             # go control back to main window
             print("\n\tSwitching back to main window.")
             driver.switch_to.window(main_window)
-            print("\tSwitched successfully to \"{}\".".format(driver.title))
+            print(f"\tSwitched successfully to \"{driver.title}\".")
             time.sleep(3)
 
             # full page screenshot
