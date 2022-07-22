@@ -133,3 +133,22 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# pip file
+Pipfile
+Pipfile.lock
+
+# Wallet address
+account.txt
+
+# Signin check file
+sign.file
+
+# Throttle file check
+throttle.txt
+
+# vscode config files
+.vscode
+
+# .png files
+*.png
