@@ -136,13 +136,25 @@ def main():
     resource_limit = 100   # skip mining if resources are above the set limit
     resource_sleep = 30    # sleep for given time if there is not enough resources
 
-    # set Chrome options
     chrome_options = Options()
+    
+    # set Page load strategy
+    chrome_options.page_load_strategy = "eager"
+
+    # set Chrome options
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-extensions")
+    chrome_options.add_argument("--disable-crash-reporter")
+    chrome_options.add_argument("--disable-gpu")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--disable-in-process-stack-traces")
+    chrome_options.add_argument("--disable-logging")
     chrome_options.add_argument("--log-level=3")
     chrome_options.add_argument("--ignore-certificate-errors")
     chrome_options.add_argument("--ignore-certificate-errors-spki-list")
     chrome_options.add_argument("--ignore-ssl-errors")
     chrome_options.add_argument("--mute-audio")
+    chrome_options.add_argument("--output=/dev/null")
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
 
     # headless mode when signed in
@@ -163,8 +175,8 @@ def main():
 
     # instantiate Chrome driver with given Chrome options
     try:
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=chrome_options)
-        
+        driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options = chrome_options)
+
         # instantiate stealth
         stealth(driver,
                 languages=["en-US", "en"],
@@ -524,8 +536,6 @@ def main():
 
                         # if login button found then print message & restart
                         if btn_login:
-                            notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Please \"Login\".")
-                            
                             # full page screenshot
                             total_width = driver.execute_script("return document.body.offsetWidth")
                             total_height = driver.execute_script("return document.body.scrollHeight")
