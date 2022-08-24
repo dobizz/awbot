@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import sys
 import os
 import time
@@ -13,7 +12,6 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-from selenium.common.exceptions import NoSuchElementException
 from selenium_stealth import stealth
 from webdriver_manager.chrome import ChromeDriverManager
 from awapi import Account
@@ -41,7 +39,7 @@ def main():
     global path, exit_sc, loop_count, mine_loop_count, sell_file, sign_file
 
     # clear terminal
-    os.system('cls' if os.name == 'nt' else 'clear')
+    os.system("cls" if os.name == "nt" else "clear")
     
     # check internet connection
     conn = httplib.HTTPConnection("1.1.1.1", timeout = 10)
@@ -142,19 +140,14 @@ def main():
     chrome_options.page_load_strategy = "eager"
 
     # set Chrome options
-    chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-extensions")
     chrome_options.add_argument("--disable-crash-reporter")
-    chrome_options.add_argument("--disable-gpu")
-    chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--disable-in-process-stack-traces")
-    chrome_options.add_argument("--disable-logging")
     chrome_options.add_argument("--log-level=3")
     chrome_options.add_argument("--ignore-certificate-errors")
     chrome_options.add_argument("--ignore-certificate-errors-spki-list")
     chrome_options.add_argument("--ignore-ssl-errors")
     chrome_options.add_argument("--mute-audio")
-    chrome_options.add_argument("--output=/dev/null")
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
 
     # headless mode when signed in
@@ -173,9 +166,12 @@ def main():
     # for ChromeDriver version 79.0.3945.16 or over
     chrome_options.add_argument("--disable-blink-features=AutomationControlled")
 
+    # check for latest chromedriver
+    driver_service = Service(ChromeDriverManager().install())
+
     # instantiate Chrome driver with given Chrome options
     try:
-        driver = webdriver.Chrome(service = Service(ChromeDriverManager().install()), options = chrome_options)
+        driver = webdriver.Chrome(service = driver_service, options = chrome_options)
 
         # instantiate stealth
         stealth(driver,
@@ -273,27 +269,27 @@ def main():
         loop_count += 1
 
         # clear terminal
-        os.system('cls' if os.name == 'nt' else 'clear')
+        os.system("cls" if os.name == "nt" else "clear")
 
         print(f"Wallet address: \"{wallet}\"")
 
         try:
             # fetch cpu usage details
             cpu_usage = aw.cpu_usage
-            cpu_max = cpu_usage['max']
-            cpu_used = cpu_usage['used']
+            cpu_max = cpu_usage["max"]
+            cpu_used = cpu_usage["used"]
             cpu_pct = int(cpu_used / cpu_max * 100)
 
             # fetch ram usage details
             ram_usage = aw.ram_usage
-            ram_max = ram_usage['max']
-            ram_used = ram_usage['used']
+            ram_max = ram_usage["max"]
+            ram_used = ram_usage["used"]
             ram_pct = int(ram_used / ram_max * 100)
 
             # fetch net usage details
             net_usage = aw.net_usage
-            net_max = net_usage['max']
-            net_used = net_usage['used']
+            net_max = net_usage["max"]
+            net_used = net_usage["used"]
             net_pct = int(net_used / net_max * 100)
 
             print("\nCPU: [ {:,} / {:,} ms ]\t\t\tUsed: {} %".format(cpu_used, cpu_max, cpu_pct))
@@ -409,10 +405,10 @@ def main():
                     print("Found \"Mine\" button!")
 
                     # full page screenshot
-                    total_width = driver.execute_script("return document.body.offsetWidth")
-                    total_height = driver.execute_script("return document.body.scrollHeight")
-                    driver.set_window_size(total_width, total_height)
-                    driver.save_screenshot("sc_main_mine.png")   # image will be saved as "sc_main_mine.png" in the bot's directory
+                    # total_width = driver.execute_script("return document.body.offsetWidth")
+                    # total_height = driver.execute_script("return document.body.scrollHeight")
+                    # driver.set_window_size(total_width, total_height)
+                    # driver.save_screenshot("sc_main_mine.png")   # image will be saved as "sc_main_mine.png" in the bot's directory
 
                     mine_btn.click()
                     break
@@ -425,10 +421,10 @@ def main():
                 print("Found \"Claim\" button!")
 
                 # full page screenshot
-                total_width = driver.execute_script("return document.body.offsetWidth")
-                total_height = driver.execute_script("return document.body.scrollHeight")
-                driver.set_window_size(total_width, total_height)
-                driver.save_screenshot("sc_main_claim.png")   # image will be saved as "sc_main_claim.png" in the bot's directory
+                # total_width = driver.execute_script("return document.body.offsetWidth")
+                # total_height = driver.execute_script("return document.body.scrollHeight")
+                # driver.set_window_size(total_width, total_height)
+                # driver.save_screenshot("sc_main_claim.png")   # image will be saved as "sc_main_claim.png" in the bot's directory
 
                 # click claim button
                 claim_btn.click()
@@ -490,10 +486,10 @@ def main():
                     print("\n\tFound \"Approve\" button!")
 
                     # full page screenshot
-                    total_width = driver.execute_script("return document.body.offsetWidth")
-                    total_height = driver.execute_script("return document.body.scrollHeight")
-                    driver.set_window_size(total_width, total_height)
-                    driver.save_screenshot("sc_popup_approve.png")   # image will be saved as "sc_popup_approve.png" in the bot's directory
+                    # total_width = driver.execute_script("return document.body.offsetWidth")
+                    # total_height = driver.execute_script("return document.body.scrollHeight")
+                    # driver.set_window_size(total_width, total_height)
+                    # driver.save_screenshot("sc_popup_approve.png")   # image will be saved as "sc_popup_approve.png" in the bot's directory
 
                     btn.click()
                     print("\tApproving transaction.")
@@ -515,10 +511,10 @@ def main():
                         print("\n\tFound \"Cancel\" button!")
 
                         # full page screenshot
-                        total_width = driver.execute_script("return document.body.offsetWidth")
-                        total_height = driver.execute_script("return document.body.scrollHeight")
-                        driver.set_window_size(total_width, total_height)
-                        driver.save_screenshot("sc_popup_can.png")   # image will be saved as "sc_popup_can.png" in the bot's directory
+                        # total_width = driver.execute_script("return document.body.offsetWidth")
+                        # total_height = driver.execute_script("return document.body.scrollHeight")
+                        # driver.set_window_size(total_width, total_height)
+                        # driver.save_screenshot("sc_popup_can.png")   # image will be saved as "sc_popup_can.png" in the bot's directory
 
                         btn_can.click()
                         print("\tCancelling transaction.")
@@ -537,10 +533,10 @@ def main():
                         # if login button found then print message & restart
                         if btn_login:
                             # full page screenshot
-                            total_width = driver.execute_script("return document.body.offsetWidth")
-                            total_height = driver.execute_script("return document.body.scrollHeight")
-                            driver.set_window_size(total_width, total_height)
-                            driver.save_screenshot("sc_popup_login.png")   # image will be saved as "sc_popup_login.png" in the bot's directory
+                            # total_width = driver.execute_script("return document.body.offsetWidth")
+                            # total_height = driver.execute_script("return document.body.scrollHeight")
+                            # driver.set_window_size(total_width, total_height)
+                            # driver.save_screenshot("sc_popup_login.png")   # image will be saved as "sc_popup_login.png" in the bot's directory
 
                             os.remove("sign.file")
                             print("\n\tRestarting bot.")
@@ -565,10 +561,10 @@ def main():
             time.sleep(3)
 
             # full page screenshot
-            total_width = driver.execute_script("return document.body.offsetWidth")
-            total_height = driver.execute_script("return document.body.scrollHeight")
-            driver.set_window_size(total_width, total_height)
-            driver.save_screenshot("sc_main.png")   # image will be saved as "sc_main.png" in the bot's directory
+            # total_width = driver.execute_script("return document.body.offsetWidth")
+            # total_height = driver.execute_script("return document.body.scrollHeight")
+            # driver.set_window_size(total_width, total_height)
+            # driver.save_screenshot("sc_main.png")   # image will be saved as "sc_main.png" in the bot's directory
 
             # show the number of loops done
             print(f"\nTotal number of execution(s): {loop_count}")
