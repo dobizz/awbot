@@ -31,7 +31,7 @@ python awbot.py
 ### Features
 - ###### "Bot resource(s) throttling" feature disables the check for CPU, NET, RAM usage. This enables the bot to click even when the resources are above 100%.
 - ###### "Headless mode" is the mode where browser will completely run in the background without disturbing you. When login will be required, headless mode will be turned OFF automatically.
-- ###### "Screenshots" of the last updated pages now available in the bot's directory.
+- ###### "Screenshot" of the last opened pages.
 - ###### Added a feature to sell the "TLM" tokens. This can be done by creating a file "sell.file" in the bot's directory.
 
 ### PS
