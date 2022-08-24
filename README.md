@@ -39,6 +39,7 @@ python awbot.py
 - ###### Follow the prompts in the command terminal.
 - ###### You must open the terminal in the same directory where the files are stored.
 - ###### To prevent any errors, click the "Mine" button and "claim" manually very first time of using the bot. Their is some issue with WAX wallet, or you must have some "TLM" tokens in your wallet.
+- ###### To take screenshot, you've to uncomment 4 lines under the comment ```# full page screenshot``` within the bot.
 - ###### Feel free to make suggestions, report bugs on this project's [discussions](https://github.com/theDebonair/awbot/discussions) tab.
 
 ### Want to buy me a lambo?
