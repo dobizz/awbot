@@ -135,18 +135,13 @@ def main():
     resource_sleep = 30    # sleep for given time if there is not enough resources
 
     chrome_options = Options()
-    
-    # set Page load strategy
-    chrome_options.page_load_strategy = "eager"
 
     # set Chrome options
-    chrome_options.add_argument("--disable-extensions")
-    chrome_options.add_argument("--disable-crash-reporter")
-    chrome_options.add_argument("--disable-in-process-stack-traces")
     chrome_options.add_argument("--log-level=3")
     chrome_options.add_argument("--ignore-certificate-errors")
     chrome_options.add_argument("--ignore-certificate-errors-spki-list")
     chrome_options.add_argument("--ignore-ssl-errors")
+    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
     chrome_options.add_argument("--mute-audio")
     chrome_options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36")
 
@@ -159,15 +154,8 @@ def main():
     pwd = pathlib.Path().absolute()
     chrome_options.add_argument(f"--user-data-dir={pwd}\\chrome-data")
 
-    # for older ChromeDriver under version 79.0.3945.16
-    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
-    chrome_options.add_experimental_option("useAutomationExtension", False)
-
-    # for ChromeDriver version 79.0.3945.16 or over
-    chrome_options.add_argument("--disable-blink-features=AutomationControlled")
-
     # check for latest chromedriver
-    driver_service = Service(ChromeDriverManager().install())
+    driver_service = Service()
 
     # instantiate Chrome driver with given Chrome options
     try:
@@ -380,6 +368,38 @@ def main():
                 ntfile.close()
                 driver.quit()
                 return
+            
+            # wait for mine button to be found
+            print("\nSearching for \"Start Now\" button.")
+
+            while True:
+                # try to search for "start now" button
+                try:
+                    start_btn = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, "//*[starts-with(text(), 'Start')]")))
+                
+                except KeyboardInterrupt:
+                    print("\nStopping bot.")
+                    exit_sc = True
+                    driver.quit()
+                    return
+
+                # if button is not found
+                except:    
+                    print('\n\tUnable to load or find \"Start Now\" button.')
+                    break
+                
+                # if button is found, then click
+                else:
+                    print("Found \"Start Now\" button!")
+
+                    # full page screenshot
+                    # total_width = driver.execute_script("return document.body.offsetWidth")
+                    # total_height = driver.execute_script("return document.body.scrollHeight")
+                    # driver.set_window_size(total_width, total_height)
+                    # driver.save_screenshot("sc_main_mine.png")   # image will be saved as "sc_main_mine.png" in the bot's directory
+
+                    start_btn.click()
+                    break
 
             # wait for mine button to be found
             print("\nSearching for \"Mine\" button.")
@@ -387,7 +407,7 @@ def main():
             while True:
                 # try to find mine button
                 try:
-                    mine_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[starts-with(text(), 'Mine')]")))
+                    mine_btn = WebDriverWait(driver, 30).until(ec.visibility_of_element_located((By.XPATH, "//*[starts-with(text(), 'Mine')]")))
 
                 except KeyboardInterrupt:
                     print("\nStopping bot.")
@@ -417,7 +437,7 @@ def main():
             print("\nSearching for \"Claim\" button.")
             
             try:
-                claim_btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[starts-with(text(), 'Claim')]")))
+                claim_btn = WebDriverWait(driver, 15).until(ec.visibility_of_element_located((By.XPATH, "//*[starts-with(text(), 'Claim')]")))
                 print("Found \"Claim\" button!")
 
                 # full page screenshot
@@ -479,7 +499,7 @@ def main():
             # for pop-up window click(s)
             try:
                 # wait for approve button to be visible & click button
-                btn = WebDriverWait(driver, 60).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
+                btn = WebDriverWait(driver, 30).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Approve')]")))
 
                 # if button found then it'll be clicked
                 if btn:
@@ -504,7 +524,7 @@ def main():
             except:
                 try:
                     # wait for cancel button to be visible & click button
-                    btn_can = WebDriverWait(driver, 10).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Cancel')]")))
+                    btn_can = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Cancel')]")))
 
                     # if cancel button found then it'll be clicked
                     if btn_can:
@@ -528,7 +548,7 @@ def main():
                 except:
                     try:
                         # wait for login button to be visible
-                        btn_login = WebDriverWait(driver, 10).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Login')]")))
+                        btn_login = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Login')]")))
 
                         # if login button found then print message & restart
                         if btn_login:
@@ -558,7 +578,24 @@ def main():
             print("\n\tSwitching back to main window.")
             driver.switch_to.window(main_window)
             print(f"\tSwitched successfully to \"{driver.title}\".")
-            time.sleep(3)
+            
+            try:
+                WebDriverWait(driver, 5).until(ec.visibility_of_element_located((By.XPATH, "//*[contains(text(), 'Nothing')]")))
+                notification.notify(title = os.path.basename(path) + "\\" + os.path.basename(__file__), message = "Nothing to be mined!")
+                print("\n\tNothing to be mined!")
+                time.sleep(5)
+
+            except KeyboardInterrupt:
+                print("\nStopping bot.")
+                exit_sc = True
+                driver.quit()
+                return
+
+            except:
+                pass
+
+            else:
+                continue
 
             # full page screenshot
             # total_width = driver.execute_script("return document.body.offsetWidth")
